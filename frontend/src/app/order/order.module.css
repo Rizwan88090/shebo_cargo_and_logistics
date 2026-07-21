@@ -1,0 +1,415 @@
+.page {
+  background: var(--color-navy-900);
+}
+
+/* ——— Hero / flow ——— */
+.hero {
+  position: relative;
+  padding: calc(var(--space-32) + var(--space-4)) 0 var(--space-24);
+  background: var(--gradient-navy);
+  color: var(--color-white);
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(212, 168, 83, 0.14) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 30%, rgba(42, 80, 120, 0.25) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero :global(.container) {
+  position: relative;
+  z-index: 1;
+}
+
+.heroTitle {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: clamp(2.4rem, 5vw, 3.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+  max-width: 720px;
+  margin: var(--space-5) 0 var(--space-12);
+}
+
+.heroTitle .display-italic {
+  font-weight: 500;
+}
+
+/* ——— Steps ——— */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-16);
+}
+
+.stepCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+}
+
+.stepNum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--gradient-gold);
+  color: var(--color-navy-900);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  box-shadow: 0 4px 12px rgba(212, 168, 83, 0.35);
+}
+
+.stepTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: 2px;
+}
+
+.stepDesc {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+}
+
+/* ——— Two-column flow ——— */
+.flowGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.flowCard {
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.bargainCard {
+  background: linear-gradient(160deg, rgba(34, 197, 94, 0.08), rgba(255, 255, 255, 0.02));
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+.stepLabel {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+.bargainCard .stepLabel {
+  color: var(--color-green-400);
+}
+
+.confirmCard .stepLabel {
+  color: var(--color-gold-400);
+}
+
+.flowTitle {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--color-white);
+  line-height: 1.25;
+  margin-bottom: var(--space-4);
+}
+
+.flowText {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  margin-bottom: var(--space-6);
+}
+
+.waBtn {
+  margin-bottom: var(--space-4);
+}
+
+.waPhone {
+  display: block;
+  text-align: center;
+  color: var(--color-green-400);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-6);
+}
+
+.waPhone:hover {
+  color: var(--color-green-500);
+}
+
+.noteBox {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+}
+
+/* ——— Form ——— */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.rateField {
+  position: relative;
+}
+
+.rateField input {
+  padding-right: 3.25rem;
+}
+
+.rateSuffix {
+  position: absolute;
+  top: 50%;
+  right: var(--space-4);
+  transform: translateY(-50%);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-gold-400);
+  pointer-events: none;
+}
+
+:global(html[dir="rtl"]) .rateSuffix {
+  right: auto;
+  left: var(--space-4);
+}
+
+:global(html[dir="rtl"]) .rateField input {
+  padding-right: var(--space-4);
+  padding-left: 3.25rem;
+}
+
+.formNote {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ——— My orders ——— */
+.ordersHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.ordersTitle {
+  font-size: var(--text-4xl);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-green-600);
+}
+
+.liveDot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--radius-full);
+  background: var(--color-green-500);
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  animation: livePulse 2s infinite;
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.emptyCard {
+  padding: var(--space-16) var(--space-8);
+  text-align: center;
+  background: var(--color-white);
+  border-radius: var(--radius-2xl);
+  color: var(--color-gray-500);
+  font-size: var(--text-base);
+  box-shadow: var(--shadow-md);
+}
+
+.ordersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-5);
+}
+
+.orderCard {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-gray-100);
+}
+
+.orderCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.orderNumber {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--color-navy-700);
+}
+
+.orderRoute {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-navy-800);
+  margin-bottom: var(--space-3);
+}
+
+.arrow {
+  color: var(--color-gold-500);
+  margin: 0 var(--space-1);
+}
+
+.orderMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  color: var(--color-gray-500);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.orderRate {
+  font-weight: 700;
+  color: var(--color-navy-800);
+}
+
+.orderFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--color-gray-400);
+}
+
+.trackNo {
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
+
+/* ——— Dark mode ——— */
+[data-theme="dark"] .orderCard {
+  background: var(--color-navy-700);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .orderNumber,
+[data-theme="dark"] .orderRoute,
+[data-theme="dark"] .orderRate {
+  color: #ffffff;
+}
+[data-theme="dark"] .orderMeta,
+[data-theme="dark"] .orderFooter {
+  color: rgba(255, 255, 255, 0.6);
+}
+[data-theme="dark"] .emptyCard {
+  background: var(--color-navy-700);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ——— Status badges ——— */
+.badge {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.badgePending {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.badgeProcessing {
+  background: rgba(59, 130, 246, 0.14);
+  color: #1d4ed8;
+}
+
+.badgeInTransit {
+  background: rgba(99, 102, 241, 0.14);
+  color: #4338ca;
+}
+
+.badgeCustoms {
+  background: rgba(168, 85, 247, 0.14);
+  color: #7e22ce;
+}
+
+.badgeDelivered {
+  background: rgba(16, 185, 129, 0.16);
+  color: #047857;
+}
+
+.badgeCancelled {
+  background: rgba(239, 68, 68, 0.14);
+  color: #b91c1c;
+}
+
+/* ——— Responsive ——— */
+@media (max-width: 960px) {
+  .flowGrid {
+    grid-template-columns: 1fr;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  .ordersHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+}

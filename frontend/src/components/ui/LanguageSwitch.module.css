@@ -1,0 +1,57 @@
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  padding: 0.2rem 0.1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.switch:hover {
+  border-color: rgba(212, 168, 83, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.option {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  border-radius: 9999px;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.25s ease;
+  letter-spacing: 0.03em;
+}
+
+.active {
+  background: var(--color-gold-500);
+  color: var(--color-navy-900);
+}
+
+.divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* When navbar is scrolled (white bg), adjust colors */
+:global(.scrolled) .switch {
+  background: rgba(10, 22, 40, 0.06);
+  border-color: rgba(10, 22, 40, 0.12);
+}
+
+:global(.scrolled) .option {
+  color: var(--color-gray-400);
+}
+
+:global(.scrolled) .active {
+  background: var(--color-navy-800);
+  color: var(--color-gold-400);
+}
+
+:global(.scrolled) .divider {
+  background: rgba(10, 22, 40, 0.12);
+}

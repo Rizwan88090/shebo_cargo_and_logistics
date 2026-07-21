@@ -1,0 +1,107 @@
+.notFoundWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-navy-900), var(--color-navy-800));
+  color: var(--color-white);
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 550px;
+}
+
+.errorNum {
+  font-family: var(--font-heading);
+  font-size: 8rem;
+  font-weight: 900;
+  color: var(--color-gold-500);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  margin-bottom: var(--space-4);
+  text-shadow: var(--shadow-glow);
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  margin-bottom: var(--space-3);
+  color: var(--color-white);
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  margin-bottom: var(--space-8);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+/* Background floating shapes */
+.shapes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shape1 {
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  width: 150px;
+  height: 150px;
+  border-radius: var(--radius-xl);
+  background: rgba(212, 168, 83, 0.03);
+  border: 1px solid rgba(212, 168, 83, 0.05);
+  transform: rotate(45deg);
+  animation: float 4s ease-in-out infinite;
+}
+
+.shape2 {
+  position: absolute;
+  bottom: 15%;
+  right: 10%;
+  width: 200px;
+  height: 200px;
+  border-radius: var(--radius-xl);
+  background: rgba(42, 80, 120, 0.05);
+  border: 1px solid rgba(42, 80, 120, 0.08);
+  transform: rotate(-15deg);
+  animation: float 6s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .errorNum {
+    font-size: 6rem;
+  }
+
+  .title {
+    font-size: var(--text-2xl);
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+  }
+
+  .actions a,
+  .actions button {
+    width: 100%;
+  }
+}

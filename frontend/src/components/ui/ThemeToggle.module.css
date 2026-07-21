@@ -1,0 +1,56 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  padding: 0.3rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.toggle:hover {
+  border-color: rgba(212, 168, 83, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.35);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.active {
+  color: var(--color-gold-500);
+  background: rgba(212, 168, 83, 0.15);
+  transform: rotate(0deg);
+}
+
+.icon:not(.active) {
+  transform: rotate(180deg);
+  opacity: 0.3;
+}
+
+/* Scrolled navbar variant */
+:global(.scrolled) .toggle {
+  background: rgba(10, 22, 40, 0.06);
+  border-color: rgba(10, 22, 40, 0.12);
+}
+
+:global(.scrolled) .icon {
+  color: var(--color-gray-300);
+}
+
+:global(.scrolled) .active {
+  color: var(--color-gold-600);
+  background: rgba(212, 168, 83, 0.12);
+}

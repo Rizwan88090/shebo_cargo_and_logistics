@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum ServiceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum OrderStatus {
+  pending
+  processing
+  in_transit
+  customs
+  delivered
+  cancelled
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String
+  firstName      String   @map("first_name")
+  lastName       String   @map("last_name")
+  phone          String?
+  role           Role     @default(USER)
+  isActive       Boolean  @default(true) @map("is_active")
+  refreshToken   String?  @map("refresh_token")
+  resetToken     String?  @map("reset_token")
+  resetTokenExp  DateTime? @map("reset_token_exp")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  orders         Order[]
+
+  @@map("users")
+}
+
+model Country {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  code        String   @unique
+  flag        String?
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  cities      City[]
+
+  @@map("countries")
+}
+
+model City {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  countryId   String   @map("country_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@unique([name, countryId])
+  @@map("cities")
+}
+
+model Service {
+  id               String        @id @default(uuid())
+  title            String        @unique
+  slug             String        @unique
+  shortDescription String?       @map("short_description")
+  description      String?
+  icon             String?
+  image            String?
+  features         String[]      @default([])
+  status           ServiceStatus @default(ACTIVE)
+  sortOrder        Int           @default(0) @map("sort_order")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  @@map("services")
+}
+
+model Order {
+  id             String      @id @default(uuid())
+  orderNumber    String      @unique @map("order_number")
+  trackingNumber String      @unique @map("tracking_number")
+  fullName       String      @map("full_name")
+  phone          String
+  fromCity       String      @map("from_city")
+  toCity         String      @map("to_city")
+  cargoType      String      @map("cargo_type")
+  agreedRate     Float       @map("agreed_rate")
+  notes          String?
+  status         OrderStatus @default(pending)
+  userId         String?     @map("user_id")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  user           User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("orders")
+}

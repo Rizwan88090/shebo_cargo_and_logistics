@@ -1,0 +1,212 @@
+.faqLayout {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr;
+  gap: var(--space-12);
+  align-items: start;
+}
+
+/* Sidebar Search & Categories */
+.filterSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.searchBox {
+  position: relative;
+  width: 100%;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-4);
+  transform: translateY(-50%);
+  color: var(--color-gray-400);
+  font-size: 1.4rem;
+}
+
+.searchInput {
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  transition: all var(--transition-base);
+  background: var(--color-white);
+  color: var(--color-gray-800);
+  width: 100%;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-gold-500);
+  box-shadow: 0 0 0 3px var(--color-gold-glow);
+}
+
+.categoriesCard {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.sidebarTitle {
+  font-size: var(--text-base);
+  color: var(--color-navy-800);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding-bottom: var(--space-2);
+}
+
+.categoryBtns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.categoryBtn {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-navy-700);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  text-align: left;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.categoryBtn:hover {
+  background: rgba(212, 168, 83, 0.05);
+  color: var(--color-gold-600);
+}
+
+.categoryBtnActive {
+  background: var(--color-navy-800);
+  color: var(--color-white);
+}
+
+.categoryBtnActive:hover {
+  color: var(--color-gold-400);
+  background: var(--color-navy-800);
+}
+
+/* Accordions */
+.listColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.listHeading {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--color-navy-800);
+}
+
+.faqGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.faqItem {
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  background: var(--color-white);
+}
+
+.faqItemOpen {
+  border-color: var(--color-gold-300);
+  box-shadow: var(--shadow-md);
+}
+
+.faqQuestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: var(--color-navy-800);
+  text-align: left;
+  transition: all var(--transition-fast);
+  background: transparent;
+  cursor: pointer;
+}
+
+.faqQuestion:hover {
+  color: var(--color-gold-600);
+}
+
+.faqIcon {
+  font-size: var(--text-xl);
+  color: var(--color-gold-500);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-left: var(--space-4);
+}
+
+.faqAnswer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-slow);
+}
+
+.faqAnswerOpen {
+  max-height: 300px;
+}
+
+.faqAnswer p {
+  padding: 0 var(--space-6) var(--space-5);
+  color: var(--color-gray-600);
+  line-height: 1.7;
+  font-size: var(--text-sm);
+}
+
+.noResults {
+  text-align: center;
+  padding: var(--space-12) 0;
+  color: var(--color-gray-550);
+}
+
+.noResults h3 {
+  font-size: var(--text-lg);
+  color: var(--color-navy-800);
+  margin-bottom: var(--space-2);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .faqLayout {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .filterSidebar {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .categoryBtns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+}
+
+@media (max-width: 768px) {
+  .filterSidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .categoryBtns {
+    grid-template-columns: 1fr;
+  }
+}
