@@ -229,24 +229,51 @@
 
 /* Mobile Nav */
 .mobileNav {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(5, 13, 26, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   z-index: var(--z-overlay);
   padding-top: 80px;
-  transform: translateX(100%);
-  transition: transform var(--transition-slow);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  /* iOS fix: use visibility+opacity instead of display:none 
+     display:none -> display:block transitions break paint on iOS WebKit */
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transform: translateX(100%);
+  transform: translateX(100%);
+  -webkit-transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                      visibility 0s linear 0.35s;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0s linear 0.35s;
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: none;
 }
 
 .mobileNav.mobileNavOpen {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transform: translateX(0);
   transform: translateX(0);
+  -webkit-transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                      visibility 0s linear 0s;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0s linear 0s;
+  pointer-events: auto;
 }
 
 .mobileClose {
@@ -358,10 +385,12 @@
 }
 
 :global(html[dir="rtl"]) .mobileNav {
+  -webkit-transform: translateX(-100%);
   transform: translateX(-100%);
 }
 
 :global(html[dir="rtl"]) .mobileNav.mobileNavOpen {
+  -webkit-transform: translateX(0);
   transform: translateX(0);
 }
 
@@ -388,9 +417,8 @@
     display: flex;
   }
 
-  .mobileNav {
-    display: block;
-  }
+  /* mobileNav is always in DOM, controlled by visibility+opacity+transform
+     for iOS WebKit compatibility — no display toggle needed */
 }
 
 @media (max-width: 480px) {
