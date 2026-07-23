@@ -47,6 +47,20 @@ const galleryItems = [
   },
   {
     id: 6,
+    title: "Car Shipping Transporter",
+    category: "Freight",
+    image: "/images/car-shipping.png",
+    description: "Dedicated auto transporter truck loaded with cars, fully branded with Shebo Cargo & Logistics.",
+  },
+  {
+    id: 7,
+    title: "Secure Warehouse Facility",
+    category: "Relocation",
+    image: "/images/warehouse-storage.png",
+    description: "High-tech climate-controlled warehouse with 24/7 CCTV and bonded storage facilities.",
+  },
+  {
+    id: 8,
     title: "Global Logistics Hub",
     category: "Freight",
     image: "/images/hero-bg.png",

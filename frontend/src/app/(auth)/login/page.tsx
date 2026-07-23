@@ -90,19 +90,7 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign In"}
             </button>
 
-            <div style={{
-              marginTop: "1.25rem",
-              padding: "0.75rem 1rem",
-              background: "rgba(212, 168, 83, 0.08)",
-              border: "1px solid rgba(212, 168, 83, 0.25)",
-              borderRadius: "0.5rem",
-              fontSize: "0.78rem",
-              color: "var(--color-gray-800)",
-              textAlign: "center",
-              lineHeight: "1.5"
-            }} className="admin-login-tip">
-              💡 <strong>Administrator access:</strong> sign in with <code>itxsheboo@gmail.com</code> to open the Admin Control Panel. Make sure the backend API is running.
-            </div>
+
           </form>
         </motion.div>
       </div>

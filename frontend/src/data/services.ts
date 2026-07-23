@@ -163,7 +163,7 @@ export const services: Service[] = [
     shortDescription:
       "Worldwide car shipping via car carrier and special recovery — RoRo, containerized, insured and door-to-door.",
     icon: "MdDirectionsCar",
-    image: "/images/sea-cargo.png",
+    image: "/images/car-shipping.png",
     features: [
       "Worldwide car shipping — Gulf, Asia, Europe & the Americas",
       "Via enclosed car carrier & special recovery trucks",
@@ -219,7 +219,7 @@ export const services: Service[] = [
     shortDescription:
       "Secure short & long-term warehouse storage with climate control, bonded zones and inventory management.",
     icon: "MdWarehouse",
-    image: "/images/office-relocation.png",
+    image: "/images/warehouse-storage.png",
     features: [
       "Short-term & long-term storage",
       "Climate-controlled & ambient warehousing",
