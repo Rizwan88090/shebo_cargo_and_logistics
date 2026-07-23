@@ -13,7 +13,7 @@ export const jobOpenings: JobOpening[] = [
     id: "job-1",
     title: "Logistics Operations Coordinator",
     department: "Operations",
-    location: "Al Quoz, Dubai",
+    location: "Hor Al Anz East, Dubai",
     type: "Full-time",
     description: "Manage daily shipping schedules, coordinate with air/sea carriers, and handle customs documentation processing.",
     requirements: [
@@ -27,7 +27,7 @@ export const jobOpenings: JobOpening[] = [
     id: "job-2",
     title: "Sales Executive — Air & Sea Freight",
     department: "Sales",
-    location: "Al Quoz, Dubai",
+    location: "Hor Al Anz East, Dubai",
     type: "Full-time",
     description: "Develop new corporate accounts, prepare quotes, negotiate freight rates, and grow regional logistics revenue.",
     requirements: [
@@ -55,7 +55,7 @@ export const jobOpenings: JobOpening[] = [
     id: "job-4",
     title: "Relocation Specialist / Project Leader",
     department: "Home Shifting",
-    location: "Al Quoz, Dubai",
+    location: "Hor Al Anz East, Dubai",
     type: "Full-time",
     description: "Lead villa and office moving crews, coordinate inventory packaging, and ensure premium damage-free shifting service.",
     requirements: [

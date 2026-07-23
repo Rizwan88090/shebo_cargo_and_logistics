@@ -914,6 +914,10 @@
     grid-template-columns: 1fr 1fr;
   }
 
+  .whyUsTitle {
+    font-size: var(--text-3xl);
+  }
+
   .countriesGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -934,6 +938,14 @@
 @media (max-width: 480px) {
   .heroTitle {
     font-size: var(--text-3xl);
+  }
+
+  .whyUsTitle {
+    font-size: var(--text-2xl);
+  }
+
+  .whyUsStats {
+    grid-template-columns: 1fr;
   }
 
   .heroStats {

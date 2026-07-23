@@ -38,17 +38,25 @@ export default function AdminDashboardPage() {
     const handler = () => load();
     window.addEventListener(ORDERS_UPDATED_EVENT, handler);
     window.addEventListener("storage", handler);
+    // Poll so the dashboard reflects accept/reject decisions live, without a manual refresh.
+    const interval = setInterval(load, 10000);
     return () => {
       window.removeEventListener(ORDERS_UPDATED_EVENT, handler);
       window.removeEventListener("storage", handler);
+      clearInterval(interval);
     };
   }, [load]);
 
-  // ——— Real KPIs (from actual orders) ———
-  const totalRevenue = orders.reduce((s, o) => s + (o.agreedRate || 0), 0);
-  const totalOrders = orders.length;
-  const activeShipments = orders.filter((o) => ACTIVE_STATUSES.includes(o.status)).length;
-  const activeClients = new Set(orders.map((o) => o.phone)).size;
+  // ——— Dashboard reflects accepted business only: an order that's still pending admin
+  // review (or was rejected) has no place in revenue/KPIs yet — it stays in Order
+  // Management until an admin acts on it, then appears here live.
+  const acceptedOrders = orders.filter((o) => o.status !== "pending" && o.status !== "cancelled");
+
+  // ——— Real KPIs (from accepted orders) ———
+  const totalRevenue = acceptedOrders.reduce((s, o) => s + (o.agreedRate || 0), 0);
+  const totalOrders = acceptedOrders.length;
+  const activeShipments = acceptedOrders.filter((o) => ACTIVE_STATUSES.includes(o.status)).length;
+  const activeClients = new Set(acceptedOrders.map((o) => o.phone)).size;
 
   const stats = [
     { label: "Total Revenue", value: `AED ${totalRevenue.toLocaleString()}`, icon: <MdAttachMoney />, color: "gold" },
@@ -57,10 +65,10 @@ export default function AdminDashboardPage() {
     { label: "Active Shipments", value: activeShipments.toLocaleString(), icon: <MdFlightTakeoff />, color: "cyan" },
   ];
 
-  // ——— Monthly revenue (this year, from orders) ———
+  // ——— Monthly revenue (this year, from accepted orders) ———
   const monthlyRevenueData = MONTHS.map((month, i) => ({
     month,
-    revenue: orders
+    revenue: acceptedOrders
       .filter((o) => new Date(o.createdAt).getMonth() === i)
       .reduce((s, o) => s + (o.agreedRate || 0), 0),
   }));
@@ -68,7 +76,7 @@ export default function AdminDashboardPage() {
 
   // ——— Orders by service (cargo type) ———
   const serviceCounts: Record<string, number> = {};
-  orders.forEach((o) => {
+  acceptedOrders.forEach((o) => {
     serviceCounts[o.cargoType] = (serviceCounts[o.cargoType] || 0) + 1;
   });
   const serviceShareData = Object.entries(serviceCounts).map(([service, count], i) => ({
@@ -87,7 +95,9 @@ export default function AdminDashboardPage() {
     ? `conic-gradient(${gradientParts.join(", ")})`
     : "conic-gradient(var(--color-gray-200) 0% 100%)";
 
-  const recentOrders = orders.slice(0, 5);
+  const recentOrders = [...acceptedOrders]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, 5);
 
   return (
     <div>
@@ -199,7 +209,7 @@ export default function AdminDashboardPage() {
                         {o.fromCity} → {o.toCity}
                       </td>
                       <td style={{ fontWeight: 700, color: "var(--color-navy-700)" }}>
-                        AED {o.agreedRate.toLocaleString()}
+                        {o.agreedRate != null ? `AED ${o.agreedRate.toLocaleString()}` : "—"}
                       </td>
                       <td>
                         <span className={`status-badge status-badge--${o.status}`}>{label(o.status)}</span>
@@ -209,7 +219,7 @@ export default function AdminDashboardPage() {
                 ) : (
                   <tr>
                     <td colSpan={5} style={{ textAlign: "center", padding: "2.5rem 1rem", color: "var(--color-gray-400)" }}>
-                      No orders yet — new orders placed on the Order page will appear here.
+                      No accepted orders yet — new requests wait in Order Management until you accept them.
                     </td>
                   </tr>
                 )}

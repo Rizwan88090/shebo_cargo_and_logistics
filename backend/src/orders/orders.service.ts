@@ -47,6 +47,21 @@ export class OrdersService {
     return order;
   }
 
+  async findByTrackingNumber(trackingNumber: string) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        OR: [
+          { trackingNumber: { equals: trackingNumber, mode: 'insensitive' } },
+          { orderNumber: { equals: trackingNumber, mode: 'insensitive' } },
+        ],
+      },
+    });
+    if (!order) {
+      throw new NotFoundException('No order found for that tracking number.');
+    }
+    return order;
+  }
+
   async updateStatus(id: string, status: OrderStatus) {
     await this.findOne(id);
     return this.prisma.order.update({ where: { id }, data: { status } });

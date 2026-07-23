@@ -25,7 +25,7 @@ export interface Order {
   fromCity: string;
   toCity: string;
   cargoType: string;
-  agreedRate: number;
+  agreedRate: number | null;
   notes?: string;
   status: OrderStatus;
   createdAt: string;
@@ -38,7 +38,6 @@ export interface CreateOrderInput {
   fromCity: string;
   toCity: string;
   cargoType: string;
-  agreedRate: number;
   notes?: string;
 }
 
@@ -108,11 +107,29 @@ function myIds(): string[] {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
-    ...init,
-  });
-  if (!res.ok) throw new Error(`API ${res.status}`);
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      ...init,
+      // Headers MUST come after ...init — otherwise init's own `headers`
+      // (e.g. Authorization on admin PATCH calls) would override this object
+      // and drop Content-Type, so the JSON body never gets parsed on the server.
+      headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
+    });
+  } catch {
+    throw new Error("Could not reach the server. Check your connection and try again.");
+  }
+  if (!res.ok) {
+    let message = `Request failed (${res.status})`;
+    try {
+      const data = await res.json();
+      if (data?.message) message = Array.isArray(data.message) ? data.message.join(", ") : data.message;
+    } catch {
+      /* ignore body parse errors, use fallback message */
+    }
+    throw new Error(message);
+  }
+  if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
 
@@ -120,17 +137,16 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 
 export async function createOrder(input: CreateOrderInput): Promise<Order> {
   if (API_BASE) {
-    try {
-      const order = await apiFetch<Order>("/orders", {
-        method: "POST",
-        body: JSON.stringify(input),
-      });
-      rememberMine(order.id);
-      if (typeof window !== "undefined") window.dispatchEvent(new Event(ORDERS_UPDATED_EVENT));
-      return order;
-    } catch {
-      /* fall through to localStorage */
-    }
+    // Real backend mode: don't silently fall back to the disconnected localStorage
+    // demo store — a "successful" order that never reaches the database would
+    // never show up in the admin panel, which is worse than a visible error.
+    const order = await apiFetch<Order>("/orders", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    rememberMine(order.id);
+    if (typeof window !== "undefined") window.dispatchEvent(new Event(ORDERS_UPDATED_EVENT));
+    return order;
   }
 
   const now = new Date().toISOString();
@@ -139,6 +155,7 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
     orderNumber: genOrderNumber(),
     trackingNumber: genTrackingNumber(),
     ...input,
+    agreedRate: null,
     status: "pending",
     createdAt: now,
     updatedAt: now,
@@ -153,27 +170,36 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
 /** Orders placed from this browser (the public "My orders" list). */
 export async function listMyOrders(): Promise<Order[]> {
   if (API_BASE) {
+    const ids = myIds();
+    if (ids.length === 0) return [];
     try {
-      const ids = myIds();
-      if (ids.length === 0) return [];
       return await apiFetch<Order[]>(`/orders/mine?ids=${encodeURIComponent(ids.join(","))}`);
     } catch {
-      /* fall through */
+      // Read-only widget: fail quiet (empty list) rather than showing stale,
+      // disconnected localStorage data alongside real backend orders.
+      return [];
     }
   }
   return readStore();
 }
 
-/** All orders (admin view). Requires the backend + auth token when in API mode. */
+/**
+ * All orders (admin view). Requires the backend + auth token when in API mode.
+ *
+ * Note: once `NEXT_PUBLIC_API_URL` is configured, admin reads/writes talk to the
+ * real database exclusively — they do NOT silently fall back to the disconnected
+ * localStorage demo store on failure. A silent fallback here previously made
+ * Accept/Reject *look* like they worked (toast said "success") while nothing
+ * actually changed in the database, because the write landed in a different
+ * dataset than the one being displayed. Errors now propagate so the UI can
+ * show what really happened.
+ */
 export async function listAllOrders(token?: string): Promise<Order[]> {
-  if (API_BASE && token) {
-    try {
-      return await apiFetch<Order[]>("/orders", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    } catch {
-      /* fall through */
-    }
+  if (API_BASE) {
+    if (!token) throw new Error("You must be signed in as an admin to view orders.");
+    return apiFetch<Order[]>("/orders", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   }
   return readStore();
 }
@@ -183,18 +209,15 @@ export async function updateOrderStatus(
   status: OrderStatus,
   token?: string,
 ): Promise<void> {
-  if (API_BASE && token) {
-    try {
-      await apiFetch(`/orders/${id}/status`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ status }),
-      });
-      if (typeof window !== "undefined") window.dispatchEvent(new Event(ORDERS_UPDATED_EVENT));
-      return;
-    } catch {
-      /* fall through */
-    }
+  if (API_BASE) {
+    if (!token) throw new Error("You must be signed in as an admin to update orders.");
+    await apiFetch(`/orders/${id}/status`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ status }),
+    });
+    if (typeof window !== "undefined") window.dispatchEvent(new Event(ORDERS_UPDATED_EVENT));
+    return;
   }
   const orders = readStore().map((o) =>
     o.id === id ? { ...o, status, updatedAt: new Date().toISOString() } : o,
@@ -207,21 +230,71 @@ export async function updateOrderRate(
   agreedRate: number,
   token?: string,
 ): Promise<void> {
-  if (API_BASE && token) {
-    try {
-      await apiFetch(`/orders/${id}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ agreedRate }),
-      });
-      if (typeof window !== "undefined") window.dispatchEvent(new Event(ORDERS_UPDATED_EVENT));
-      return;
-    } catch {
-      /* fall through */
-    }
+  if (API_BASE) {
+    if (!token) throw new Error("You must be signed in as an admin to update orders.");
+    await apiFetch(`/orders/${id}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ agreedRate }),
+    });
+    if (typeof window !== "undefined") window.dispatchEvent(new Event(ORDERS_UPDATED_EVENT));
+    return;
   }
   const orders = readStore().map((o) =>
     o.id === id ? { ...o, agreedRate, updatedAt: new Date().toISOString() } : o,
   );
   writeStore(orders);
+}
+
+/** Look up a single order by tracking number or order number (public tracking page). */
+export async function trackOrder(query: string): Promise<Order | null> {
+  const q = query.trim();
+  if (!q) return null;
+  if (API_BASE) {
+    try {
+      return await apiFetch<Order>(`/orders/track/${encodeURIComponent(q)}`);
+    } catch {
+      return null;
+    }
+  }
+  const upper = q.toUpperCase();
+  return (
+    readStore().find(
+      (o) => o.trackingNumber.toUpperCase() === upper || o.orderNumber.toUpperCase() === upper,
+    ) ?? null
+  );
+}
+
+export interface TimelineStep {
+  step: string;
+  date?: string;
+  completed: boolean;
+}
+
+const STATUS_STEPS: { key: OrderStatus; label: string }[] = [
+  { key: "pending", label: "Order Placed" },
+  { key: "processing", label: "Processing" },
+  { key: "in_transit", label: "In Transit" },
+  { key: "customs", label: "Customs Clearance" },
+  { key: "delivered", label: "Delivered" },
+];
+
+function fmtDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+}
+
+/** Derives a shipment progress timeline from an order's current status. */
+export function buildOrderTimeline(order: Order): TimelineStep[] {
+  if (order.status === "cancelled") {
+    return [
+      { step: "Order Placed", date: fmtDate(order.createdAt), completed: true },
+      { step: "Cancelled", date: fmtDate(order.updatedAt), completed: true },
+    ];
+  }
+  const currentIndex = STATUS_STEPS.findIndex((s) => s.key === order.status);
+  return STATUS_STEPS.map((s, i) => ({
+    step: s.label,
+    date: i === 0 ? fmtDate(order.createdAt) : i <= currentIndex ? fmtDate(order.updatedAt) : undefined,
+    completed: i <= currentIndex,
+  }));
 }

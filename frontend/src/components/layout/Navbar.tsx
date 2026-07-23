@@ -10,7 +10,6 @@ import { navigation } from "@/data/navigation";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/config/i18n";
 import LanguageSwitch from "../ui/LanguageSwitch";
-import ThemeToggle from "../ui/ThemeToggle";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -44,7 +43,7 @@ export default function Navbar() {
     };
   }, [isMobileOpen]);
 
-  // Don't show public navbar on portal or admin views
+  // Don't show public navbar on portal/admin dashboards (they have their own layout)
   if (pathname.startsWith("/portal") || pathname.startsWith("/admin")) {
     return null;
   }
@@ -114,7 +113,6 @@ export default function Navbar() {
         <div className={styles.headerActions}>
           <div className={styles.desktopControls}>
             <LanguageSwitch />
-            <ThemeToggle />
           </div>
           <Link href="/login" className={`${styles.signIn} ${styles.ctaBtn}`} id="nav-login">
             {t.nav.login}
@@ -145,7 +143,6 @@ export default function Navbar() {
         <nav className={styles.mobileNavInner}>
           <div className={styles.mobileControls}>
             <LanguageSwitch />
-            <ThemeToggle />
           </div>
           {navigation.map((item) => (
             <div key={item.href} className={styles.mobileNavItem}>

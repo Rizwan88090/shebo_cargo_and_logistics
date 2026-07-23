@@ -44,7 +44,7 @@ export default function InvoiceDetailPage() {
           <div>
             <p className="invoice-company">Shebo Cargo & Logistics</p>
             <p className="invoice-meta">Dubai, United Arab Emirates &nbsp;•&nbsp; +971 4 123 4567</p>
-            <p className="invoice-meta">info@shebocargo.com &nbsp;•&nbsp; www.shebocargo.com</p>
+            <p className="invoice-meta">itxsheboo@gmail.com &nbsp;•&nbsp; www.shebocargo.com</p>
           </div>
           <div style={{ textAlign: "right" }}>
             <p className="invoice-number">{invoice.id}</p>

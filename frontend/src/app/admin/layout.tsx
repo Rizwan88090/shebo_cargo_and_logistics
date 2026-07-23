@@ -14,7 +14,6 @@ import {
   MdClose,
 } from "react-icons/md";
 import LanguageSwitch from "@/components/ui/LanguageSwitch";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 import "./admin.css";
 
 const adminSidebarLinks = [
@@ -103,7 +102,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
           <div className="adminHeaderActions">
             <LanguageSwitch />
-            <ThemeToggle />
             <div className="adminUserMenu">
               <button
                 className="adminAvatar"

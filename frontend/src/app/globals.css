@@ -204,11 +204,17 @@
   color: var(--color-gray-800);
 }
 
-/* Content cards that flip to a dark surface get light text for their
-   generic children (values/labels), while keeping accents & badges intact. */
-[data-theme="dark"] .card :where(span, div):not([class*="badge"]):not([class*="Badge"]),
-[data-theme="dark"] .glass-card :where(span, div):not([class*="badge"]):not([class*="Badge"]),
-[data-theme="dark"] .panel :where(span, div):not([class*="badge"]):not([class*="Badge"]) {
+/* Dark mode: force readable text on the many module cards/values that use dark
+   navy text colours — on dark surfaces those would otherwise be invisible.
+   Buttons, badges/pills and gold/gradient/live accents are excluded so brand
+   colours and status chips keep their own styling. (No !important, so inline
+   styles and higher-specificity component rules still win where intended.) */
+[data-theme="dark"]
+  :is(span, div, strong, b, em, small, a, label, dt, dd)
+  :not(.btn):not(.btn *)
+  :not([class*="badge" i]):not([class*="pill" i])
+  :not([class*="gold" i]):not([class*="gradient" i]):not([class*="live" i])
+  :not(.display-italic):not(.text-gold):not(.text-gradient):not(.italicBlue) {
   color: var(--color-gray-800);
 }
 
@@ -221,6 +227,31 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* ============================================
+   RESPONSIVE HARDENING
+   Stops content from forcing horizontal overflow on small screens:
+   flex/grid children may shrink, media scales down, long text wraps.
+   ============================================ */
+* {
+  min-width: 0;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe,
+embed,
+object {
+  max-width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, a, span, strong, em, li, td, th, dt, dd, blockquote, figcaption, label {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 html {
@@ -753,7 +784,7 @@ ul, ol {
 .form-select--dark {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.15);
-  color: var(--color-white);
+  color: #ffffff;
 }
 
 .form-input--dark:focus,
@@ -765,6 +796,22 @@ ul, ol {
 
 .form-input--dark::placeholder,
 .form-textarea--dark::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Native <option> popups render transparent on dark selects (browsers reuse
+   the control's near-transparent background) — give them a solid dark surface
+   with readable text so the dropdown list isn't invisible/glitchy. */
+.form-select--dark {
+  color-scheme: dark;
+}
+
+.form-select--dark option {
+  background-color: #0a1628;
+  color: #ffffff;
+}
+
+.form-select--dark option:disabled {
   color: rgba(255, 255, 255, 0.4);
 }
 

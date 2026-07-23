@@ -53,6 +53,13 @@ export class OrdersController {
     return this.ordersService.findByIds(list);
   }
 
+  @Public()
+  @Get('track/:trackingNumber')
+  @ApiOperation({ summary: 'Track an order by tracking number or order number (public)' })
+  async track(@Param('trackingNumber') trackingNumber: string) {
+    return this.ordersService.findByTrackingNumber(trackingNumber);
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)

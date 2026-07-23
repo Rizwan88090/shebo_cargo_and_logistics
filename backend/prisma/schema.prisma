@@ -112,7 +112,7 @@ model Order {
   fromCity       String      @map("from_city")
   toCity         String      @map("to_city")
   cargoType      String      @map("cargo_type")
-  agreedRate     Float       @map("agreed_rate")
+  agreedRate     Float?      @map("agreed_rate")
   notes          String?
   status         OrderStatus @default(pending)
   userId         String?     @map("user_id")

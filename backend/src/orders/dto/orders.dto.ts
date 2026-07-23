@@ -35,11 +35,6 @@ export class CreateOrderDto {
   @IsNotEmpty()
   cargoType!: string;
 
-  @ApiProperty({ example: 2450, description: 'Agreed rate in AED' })
-  @IsNumber()
-  @Min(0)
-  agreedRate!: number;
-
   @ApiProperty({ example: 'Fragile — 3 pallets', required: false })
   @IsString()
   @IsOptional()

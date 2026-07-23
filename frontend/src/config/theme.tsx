@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useCallback, type ReactNode } from "react";
 
 export type Theme = "light" | "dark";
 
@@ -12,31 +12,22 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// Dark mode is disabled — the site always runs in bright (light) mode.
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-
   useEffect(() => {
-    const saved = localStorage.getItem("shebo-theme") as Theme | null;
-    if (saved && (saved === "light" || saved === "dark")) {
-      setThemeState(saved);
+    document.documentElement.setAttribute("data-theme", "light");
+    // Clear any previously-saved dark preference so it never comes back.
+    try {
+      localStorage.removeItem("shebo-theme");
+    } catch {
+      /* ignore */
     }
   }, []);
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  const setTheme = useCallback((t: Theme) => {
-    setThemeState(t);
-    localStorage.setItem("shebo-theme", t);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setTheme(theme === "light" ? "dark" : "light");
-  }, [theme, setTheme]);
+  const noop = useCallback(() => {}, []);
 
   return (
-    <ThemeContext value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext value={{ theme: "light", setTheme: noop, toggleTheme: noop }}>
       {children}
     </ThemeContext>
   );

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
@@ -17,7 +18,18 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
   const { t } = useLanguage();
+
+  // Don't show the public footer on portal/admin dashboards or the auth pages (they have their own layout)
+  if (
+    pathname.startsWith("/portal") ||
+    pathname.startsWith("/admin") ||
+    pathname === "/login" ||
+    pathname === "/register"
+  ) {
+    return null;
+  }
 
   const companyLinks = [
     { label: t.nav.home, href: "/" },

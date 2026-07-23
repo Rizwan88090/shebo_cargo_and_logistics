@@ -104,10 +104,6 @@ export default function LoginPage() {
               💡 <strong>Administrator access:</strong> sign in with <code>itxsheboo@gmail.com</code> to open the Admin Control Panel. Make sure the backend API is running.
             </div>
           </form>
-
-          <div className="auth-form__footer">
-            Don&apos;t have an account? <Link href="/register">Create one</Link>
-          </div>
         </motion.div>
       </div>
     </>

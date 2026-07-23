@@ -187,7 +187,7 @@ export default function ContactPage() {
                           type="tel"
                           name="phone"
                           id="contact-phone"
-                          placeholder="+971 50 123 4567"
+                          placeholder="+971 50 000 0000"
                           value={formData.phone}
                           onChange={handleChange}
                           className="form-input"

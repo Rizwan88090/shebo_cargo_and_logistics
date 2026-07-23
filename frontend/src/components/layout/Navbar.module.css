@@ -5,13 +5,17 @@
   right: 0;
   z-index: var(--z-sticky);
   padding: var(--space-4) 0;
+  /* Always carry a dark backdrop — the logo/nav links are light-colored and
+     would be invisible against light page backgrounds (e.g. /login) without it. */
+  background: rgba(10, 22, 40, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(212, 168, 83, 0.06);
   transition: all var(--transition-base);
 }
 
 .header.scrolled {
   background: rgba(10, 22, 40, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   padding: var(--space-3) 0;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
   border-bottom: 1px solid rgba(212, 168, 83, 0.1);

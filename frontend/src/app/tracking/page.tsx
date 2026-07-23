@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { MdSearch, MdLocationOn, MdCheck, MdNavigation } from "react-icons/md";
-import { mockOrders } from "@/data/mock/orders";
+import { MdSearch, MdLocationOn, MdCheck } from "react-icons/md";
+import { trackOrder, buildOrderTimeline, type Order } from "@/lib/orders";
 import { useLanguage } from "@/config/i18n";
 import styles from "./tracking.module.css";
 
@@ -17,23 +17,51 @@ const statusLabels: Record<string, string> = {
   cancelled: "Cancelled",
 };
 
+const POLL_MS = 10000;
+
 export default function PublicTrackingPage() {
   const { t } = useLanguage();
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<(typeof mockOrders)[0] | null | "not_found">(null);
+  const [result, setResult] = useState<Order | null | "not_found">(null);
+  const [loading, setLoading] = useState(false);
+  const searchedRef = useRef<string | null>(null);
+
+  const runSearch = async (q: string) => {
+    const trimmed = q.trim();
+    if (!trimmed) return;
+    setLoading(true);
+    searchedRef.current = trimmed;
+    const found = await trackOrder(trimmed);
+    setResult(found ?? "not_found");
+    setLoading(false);
+  };
 
   const handleSearch = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const q = query.trim().toUpperCase();
-    if (!q) return;
-
-    const found = mockOrders.find(
-      (o) =>
-        o.trackingNumber.toUpperCase() === q ||
-        o.id.toUpperCase() === q
-    );
-    setResult(found ?? "not_found");
+    runSearch(query);
   };
+
+  // Auto-search when arriving with ?number=... (e.g. from the Order confirmation).
+  useEffect(() => {
+    const num = new URLSearchParams(window.location.search).get("number");
+    if (num) {
+      setQuery(num);
+      runSearch(num.trim());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep the result live — reflects admin status updates without a manual re-search.
+  useEffect(() => {
+    if (!result || result === "not_found" || !searchedRef.current) return;
+    const trackingNumber = result.trackingNumber;
+    const interval = setInterval(async () => {
+      const fresh = await trackOrder(trackingNumber);
+      if (fresh) setResult(fresh);
+    }, POLL_MS);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result === "not_found" ? null : (result as Order | null)?.id]);
 
   return (
     <>
@@ -80,29 +108,14 @@ export default function PublicTrackingPage() {
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </div>
-              <button type="submit" className="btn btn-primary">
-                {t.tracking.trackBtn}
+              <button type="submit" className="btn btn-primary" disabled={loading}>
+                {loading ? "Searching…" : t.tracking.trackBtn}
               </button>
             </form>
-
-            <div className={styles.samplesRow}>
-              <span className={styles.sampleLabel}>{t.tracking.tryThese}</span>
-              {["SHB-AE-78451236", "SHB-AE-78451237", "ORD-2025-005"].map((sample) => (
-                <button
-                  key={sample}
-                  className={styles.sampleBtn}
-                  onClick={() => {
-                    setQuery(sample);
-                    setTimeout(() => {
-                      const found = mockOrders.find((o) => o.trackingNumber === sample);
-                      setResult(found ?? "not_found");
-                    }, 50);
-                  }}
-                >
-                  {sample}
-                </button>
-              ))}
-            </div>
+            <p style={{ fontSize: "0.78rem", color: "var(--color-gray-400)", marginTop: "0.75rem" }}>
+              Use the tracking number or order number from your confirmation SMS/email
+              (e.g. MRD-AE-XXXXXXXX or ORD-2026-XXXX).
+            </p>
           </div>
 
           <AnimatePresence mode="wait">
@@ -135,10 +148,10 @@ export default function PublicTrackingPage() {
                   <div>
                     <h3 className={styles.resultTitle}>{result.trackingNumber}</h3>
                     <p className={styles.resultRoute}>
-                      {result.origin} → {result.destination}
+                      {result.fromCity} → {result.toCity}
                     </p>
                     <p style={{ fontSize: "0.75rem", color: "var(--color-gray-400)", marginTop: "4px" }}>
-                      {result.service} &nbsp;•&nbsp; {result.cargoType} &nbsp;•&nbsp; {result.weight}
+                      {result.cargoType} &nbsp;•&nbsp; Order {result.orderNumber}
                     </p>
                   </div>
 
@@ -147,14 +160,7 @@ export default function PublicTrackingPage() {
                       {statusLabels[result.status]}
                     </span>
                     <p style={{ fontSize: "0.78rem", color: "var(--color-gray-400)", marginTop: "8px" }}>
-                      {t.tracking.estimatedDelivery}: &nbsp;
-                      <strong>
-                        {new Date(result.estimatedDelivery).toLocaleDateString(undefined, {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </strong>
+                      Agreed rate: <strong>{result.agreedRate != null ? `AED ${result.agreedRate.toLocaleString()}` : "Awaiting quote"}</strong>
                     </p>
                   </div>
                 </div>
@@ -166,20 +172,20 @@ export default function PublicTrackingPage() {
                   </h4>
 
                   <div className={styles.timeline}>
-                    {result.timeline.map((step, idx) => {
+                    {buildOrderTimeline(result).map((step, idx, timeline) => {
                       const isCompleted = step.completed;
                       const isCurrent =
                         !step.completed &&
                         idx > 0 &&
-                        result.timeline[idx - 1]?.completed &&
+                        timeline[idx - 1]?.completed &&
                         result.status !== "cancelled";
 
                       return (
                         <div key={idx} className={styles.timelineStep}>
-                          {idx < result.timeline.length - 1 && (
+                          {idx < timeline.length - 1 && (
                             <div
                               className={`${styles.stepLine} ${
-                                result.timeline[idx + 1]?.completed ? styles.stepLineCompleted : ""
+                                timeline[idx + 1]?.completed ? styles.stepLineCompleted : ""
                               }`}
                             />
                           )}
@@ -211,9 +217,9 @@ export default function PublicTrackingPage() {
                 {/* Simulated Interactive Map */}
                 <div className={styles.mapPlaceholder}>
                   <MdLocationOn style={{ fontSize: "2rem", color: "var(--color-gold-500)" }} />
-                  <p>Real-Time GPS Location Active</p>
+                  <p>Live status updates every few seconds</p>
                   <p style={{ fontSize: "0.75rem", opacity: 0.7, fontWeight: 400 }}>
-                    Route: Transit checkpoint clearance
+                    Route: {result.fromCity} → {result.toCity}
                   </p>
                   <div className={styles.mapMarkerPulse} />
                 </div>

@@ -50,7 +50,7 @@ export default function ChatWidget() {
       setTyping(false);
       const reply: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Thank you for your message! Our team will get back to you shortly. For urgent matters, please call us at +971 50 123 4567.",
+        text: "Thank you for your message! Our team will get back to you shortly. For urgent matters, please call us at +971527540249.",
         sender: "agent",
         time: now(),
       };

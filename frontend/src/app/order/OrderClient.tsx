@@ -1,18 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
+import { MdCheck } from "react-icons/md";
 import { useLanguage } from "@/config/i18n";
 import { useToast } from "@/components/ui/NotificationToast";
 import { siteConfig } from "@/config/site";
-import {
-  createOrder,
-  listMyOrders,
-  ORDERS_UPDATED_EVENT,
-  type Order,
-  type OrderStatus,
-} from "@/lib/orders";
+import { createOrder } from "@/lib/orders";
 import styles from "./order.module.css";
+import truck from "../request-quote/quote.module.css";
 
 const emptyForm = {
   fullName: "",
@@ -20,82 +17,86 @@ const emptyForm = {
   fromCity: "",
   toCity: "",
   cargoType: "",
-  agreedRate: "",
   notes: "",
 };
+
+type Stage = "doors" | "engine" | "drive" | "done";
 
 export default function OrderClient() {
   const { t } = useLanguage();
   const { addToast } = useToast();
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
-  const [orders, setOrders] = useState<Order[]>([]);
 
-  const refresh = useCallback(() => {
-    listMyOrders().then(setOrders).catch(() => setOrders([]));
-  }, []);
+  // Dispatch animation state
+  const [showDispatch, setShowDispatch] = useState(false);
+  const [stage, setStage] = useState<Stage>("doors");
+  const [tracking, setTracking] = useState("");
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  useEffect(() => {
-    refresh();
-    const handler = () => refresh();
-    window.addEventListener(ORDERS_UPDATED_EVENT, handler);
-    window.addEventListener("storage", handler);
-    return () => {
-      window.removeEventListener(ORDERS_UPDATED_EVENT, handler);
-      window.removeEventListener("storage", handler);
-    };
-  }, [refresh]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   const waDigits = siteConfig.contact.whatsapp.replace(/\D/g, "");
   const waLink = `https://wa.me/${waDigits}?text=${encodeURIComponent(
-    "Hi Meridian, I'd like to agree a rate for a shipment.",
+    "Hi Shebo Cargo! I'd like a quote for a shipment.",
   )}`;
+
+  const isFormValid = Boolean(
+    form.fullName.trim() &&
+      form.phone.trim() &&
+      form.fromCity.trim() &&
+      form.toCity.trim() &&
+      form.cargoType,
+  );
 
   const update =
     (key: keyof typeof emptyForm) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [key]: e.target.value }));
 
+  function closeDispatch() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    setShowDispatch(false);
+    setStage("doors");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (
-      !form.fullName.trim() ||
-      !form.phone.trim() ||
-      !form.fromCity.trim() ||
-      !form.toCity.trim() ||
-      !form.cargoType ||
-      !form.agreedRate
-    ) {
+    if (!isFormValid) {
       addToast("warning", t.order.validationError);
       return;
     }
     setSubmitting(true);
     try {
-      await createOrder({
+      const order = await createOrder({
         fullName: form.fullName.trim(),
         phone: form.phone.trim(),
         fromCity: form.fromCity.trim(),
         toCity: form.toCity.trim(),
         cargoType: form.cargoType,
-        agreedRate: Number(form.agreedRate) || 0,
         notes: form.notes.trim() || undefined,
       });
-      addToast("success", t.order.placedToast);
+      setTracking(order.trackingNumber);
       setForm(emptyForm);
-      refresh();
+      // Truck dispatch animation → reveals the tracking number
+      setStage("doors");
+      setShowDispatch(true);
+      timers.current = [
+        setTimeout(() => setStage("engine"), 1800),
+        setTimeout(() => setStage("drive"), 3200),
+        setTimeout(() => setStage("done"), 5000),
+      ];
+    } catch (err) {
+      addToast(
+        "error",
+        "Could not send your request",
+        err instanceof Error ? err.message : "Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
   }
-
-  const statusClass: Record<OrderStatus, string> = {
-    pending: styles.badgePending,
-    processing: styles.badgeProcessing,
-    in_transit: styles.badgeInTransit,
-    customs: styles.badgeCustoms,
-    delivered: styles.badgeDelivered,
-    cancelled: styles.badgeCancelled,
-  };
 
   return (
     <div className={styles.page}>
@@ -122,30 +123,12 @@ export default function OrderClient() {
 
           {/* Two-column flow */}
           <div className={styles.flowGrid}>
-            {/* Step 1 — Bargain */}
-            <div className={`${styles.flowCard} ${styles.bargainCard}`}>
+            {/* Step 1 — Your details */}
+            <div className={`${styles.flowCard} ${styles.confirmCard}`}>
               <span className={styles.stepLabel}>{t.order.step1Label}</span>
               <h2 className={styles.flowTitle}>{t.order.step1Title}</h2>
               <p className={styles.flowText}>{t.order.step1Text}</p>
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`btn btn-whatsapp btn-block ${styles.waBtn}`}
-              >
-                <FaWhatsapp /> {t.order.openWhatsApp}
-              </a>
-              <a href={`tel:${waDigits}`} className={styles.waPhone}>
-                {siteConfig.contact.whatsapp}
-              </a>
-              <p className={styles.noteBox}>{t.order.step1Note}</p>
-            </div>
-
-            {/* Step 2 — Confirm */}
-            <div className={`${styles.flowCard} ${styles.confirmCard}`}>
-              <span className={styles.stepLabel}>{t.order.step2Label}</span>
-              <h2 className={styles.flowTitle}>{t.order.step2Title}</h2>
-              <form className={styles.form} onSubmit={handleSubmit}>
+              <form id="order-form" className={styles.form} onSubmit={handleSubmit}>
                 <div className={styles.formRow}>
                   <input
                     className="form-input form-input--dark"
@@ -160,6 +143,7 @@ export default function OrderClient() {
                     aria-label={t.order.phone}
                     value={form.phone}
                     onChange={update("phone")}
+                    inputMode="tel"
                   />
                 </div>
                 <div className={styles.formRow}>
@@ -178,35 +162,21 @@ export default function OrderClient() {
                     onChange={update("toCity")}
                   />
                 </div>
-                <div className={styles.formRow}>
-                  <select
-                    className="form-select form-select--dark"
-                    aria-label={t.order.cargoType}
-                    value={form.cargoType}
-                    onChange={update("cargoType")}
-                  >
-                    <option value="" disabled>
-                      {`${t.order.cargoType} *`}
+                <select
+                  className="form-select form-select--dark"
+                  aria-label={t.order.cargoType}
+                  value={form.cargoType}
+                  onChange={update("cargoType")}
+                >
+                  <option value="" disabled>
+                    {`${t.order.cargoType} *`}
+                  </option>
+                  {t.order.cargoTypes.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
                     </option>
-                    {t.order.cargoTypes.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                  <div className={styles.rateField}>
-                    <input
-                      type="number"
-                      min="0"
-                      className="form-input form-input--dark"
-                      placeholder={`${t.order.agreedRate} *`}
-                      aria-label={t.order.agreedRate}
-                      value={form.agreedRate}
-                      onChange={update("agreedRate")}
-                    />
-                    <span className={styles.rateSuffix}>AED</span>
-                  </div>
-                </div>
+                  ))}
+                </select>
                 <textarea
                   className="form-textarea form-textarea--dark"
                   placeholder={t.order.notesPlaceholder}
@@ -215,59 +185,154 @@ export default function OrderClient() {
                   onChange={update("notes")}
                   rows={3}
                 />
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-block"
-                  disabled={submitting}
-                >
-                  {submitting ? t.order.placing : `${t.order.placeOrder} →`}
-                </button>
-                <p className={styles.formNote}>{t.order.formNote}</p>
               </form>
             </div>
+
+            {/* Step 2 — What happens next */}
+            <div className={`${styles.flowCard} ${styles.bargainCard}`}>
+              <span className={styles.stepLabel}>{t.order.step2Label}</span>
+              <h2 className={styles.flowTitle}>{t.order.step2Title}</h2>
+              <p className={styles.flowText}>{t.order.step2Text}</p>
+              <button
+                type="submit"
+                form="order-form"
+                disabled={submitting}
+                className="btn btn-primary btn-block"
+              >
+                {submitting ? t.order.placing : `${t.order.sendRequest} →`}
+              </button>
+              <p className={styles.formNote}>{t.order.formNote}</p>
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`btn btn-whatsapp btn-block ${styles.waBtn}`}
+              >
+                <FaWhatsapp /> {t.order.openWhatsApp}
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* My orders */}
-      <section className="section section--cream">
-        <div className="container">
-          <div className={styles.ordersHead}>
-            <h2 className={styles.ordersTitle}>{t.order.myOrders}</h2>
-            <span className={styles.liveBadge}>
-              <span className={styles.liveDot} /> {t.order.liveUpdates}
-            </span>
-          </div>
+      {/* Truck dispatch animation → reveals tracking number */}
+      <AnimatePresence>
+        {showDispatch && (
+          <div className={truck.dispatchOverlay}>
+            <motion.div
+              className={truck.dispatchCard}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <h3 style={{ fontSize: "1.4rem", fontWeight: 900, color: "#fff" }}>
+                {siteConfig.name.split(" ")[0].toUpperCase()} LOGISTICS DEPOT
+              </h3>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.88rem" }}>
+                Sealing your request and dispatching it to our team.
+              </p>
 
-          {orders.length === 0 ? (
-            <div className={styles.emptyCard}>{t.order.emptyOrders}</div>
-          ) : (
-            <div className={styles.ordersGrid}>
-              {orders.map((o) => (
-                <div key={o.id} className={styles.orderCard}>
-                  <div className={styles.orderCardTop}>
-                    <span className={styles.orderNumber}>{o.orderNumber}</span>
-                    <span className={`${styles.badge} ${statusClass[o.status]}`}>
-                      {t.order.statusLabels[o.status]}
-                    </span>
+              <div className={truck.animationViewport}>
+                {stage === "drive" && (
+                  <>
+                    <div className={`${truck.speedLine} ${truck.speedLine1}`} />
+                    <div className={`${truck.speedLine} ${truck.speedLine2}`} />
+                    <div className={`${truck.speedLine} ${truck.speedLine3}`} />
+                  </>
+                )}
+
+                <div className={`${truck.road} ${stage === "drive" ? truck.roadAnimate : ""}`}>
+                  <div className={truck.roadLines} />
+                </div>
+
+                <div
+                  className={`${truck.truck} ${stage === "engine" ? truck.truckVibrate : ""} ${
+                    stage === "drive" ? truck.truckDriveAway : ""
+                  }`}
+                >
+                  <div className={truck.trailer}>
+                    <span className={truck.logoText}>{siteConfig.name.split(" ")[0].toUpperCase()} CARGO</span>
+                    <div className={truck.doorContainer}>
+                      <div className={`${truck.doorLeft} ${stage !== "doors" ? truck.doorClosedLeft : ""}`}>
+                        <div className={truck.lockBar} />
+                      </div>
+                      <div className={`${truck.doorRight} ${stage !== "doors" ? truck.doorClosedRight : ""}`}>
+                        <div className={truck.lockBar} />
+                      </div>
+                    </div>
                   </div>
-                  <p className={styles.orderRoute}>
-                    {o.fromCity} <span className={styles.arrow}>→</span> {o.toCity}
-                  </p>
-                  <div className={styles.orderMeta}>
-                    <span>{o.cargoType}</span>
-                    <span className={styles.orderRate}>AED {o.agreedRate.toLocaleString()}</span>
+                  <div className={truck.cabin}>
+                    <div className={truck.window} />
+                    <div className={truck.headlight} />
                   </div>
-                  <div className={styles.orderFooter}>
-                    <span>{new Date(o.createdAt).toLocaleDateString()}</span>
-                    <span className={styles.trackNo}>{o.trackingNumber}</span>
+                  <div className={`${truck.wheel} ${truck.wheel1} ${stage === "drive" ? truck.wheelSpin : ""}`}>
+                    <div className={truck.wheelInner} />
+                  </div>
+                  <div className={`${truck.wheel} ${truck.wheel2} ${stage === "drive" ? truck.wheelSpin : ""}`}>
+                    <div className={truck.wheelInner} />
+                  </div>
+                  <div className={`${truck.wheel} ${truck.wheel3} ${stage === "drive" ? truck.wheelSpin : ""}`}>
+                    <div className={truck.wheelInner} />
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+              </div>
+
+              <div className={truck.statusLabel}>
+                {stage === "doors" && "🔒 Sealing your shipment request…"}
+                {stage === "engine" && "⚡ Ignition started. Revving engine…"}
+                {stage === "drive" && "🚚 Request dispatched to our team!"}
+                {stage === "done" && "🎉 Request received successfully!"}
+              </div>
+
+              <div className={truck.subLabel}>
+                {stage === "doors" && "Securing and latching the container door bars."}
+                {stage === "engine" && "Warming up the dispatch engine."}
+                {stage === "drive" && "Departing from the depot — heading to our coordinators."}
+                {stage === "done" && "Our team will contact you shortly to confirm your rate."}
+              </div>
+
+              {stage === "done" && (
+                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      padding: "1rem",
+                      background: "rgba(16, 185, 129, 0.15)",
+                      borderRadius: "50%",
+                      color: "#10b981",
+                      fontSize: "2rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <MdCheck />
+                  </div>
+                  <p style={{ fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", fontWeight: 700 }}>
+                    Your tracking number
+                  </p>
+                  <h4 style={{ color: "#f0d78c", fontWeight: 800, fontSize: "1.5rem", letterSpacing: "0.03em", margin: "0.25rem 0 0.75rem" }}>
+                    {tracking}
+                  </h4>
+                  <p style={{ fontSize: "0.85rem", color: "rgba(255, 255, 255, 0.6)", margin: "0 auto 1.5rem", maxWidth: 380 }}>
+                    Save this number. Track your shipment&apos;s status anytime once our team confirms your rate.
+                  </p>
+                  <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
+                    <a
+                      href={`/tracking?number=${encodeURIComponent(tracking)}`}
+                      className="btn btn-primary"
+                      style={{ borderRadius: "9999px" }}
+                    >
+                      Track your shipment
+                    </a>
+                    <button onClick={closeDispatch} className="btn btn-secondary" style={{ borderRadius: "9999px" }}>
+                      Place another request
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

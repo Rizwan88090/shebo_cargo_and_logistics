@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { MdSearch, MdLocationOn, MdCheck, MdMap } from "react-icons/md";
-import { mockOrders } from "@/data/mock/orders";
+import { useEffect, useState } from "react";
+import { MdSearch, MdLocationOn, MdCheck } from "react-icons/md";
+import { trackOrder, buildOrderTimeline, type Order } from "@/lib/orders";
 
 const statusLabels: Record<string, string> = {
   pending: "Pending",
@@ -13,23 +13,37 @@ const statusLabels: Record<string, string> = {
   cancelled: "Cancelled",
 };
 
+const POLL_MS = 10000;
+
 export default function TrackingPage() {
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<(typeof mockOrders)[0] | null | "not_found">(null);
+  const [result, setResult] = useState<Order | null | "not_found">(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = () => {
-    const q = query.trim().toUpperCase();
-    const found = mockOrders.find(
-      (o) =>
-        o.trackingNumber.toUpperCase() === q ||
-        o.id.toUpperCase() === q
-    );
+  const handleSearch = async () => {
+    const q = query.trim();
+    if (!q) return;
+    setLoading(true);
+    const found = await trackOrder(q);
     setResult(found ?? "not_found");
+    setLoading(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleSearch();
   };
+
+  // Keep the result live — reflects admin status updates without a manual re-search.
+  useEffect(() => {
+    if (!result || result === "not_found") return;
+    const trackingNumber = result.trackingNumber;
+    const interval = setInterval(async () => {
+      const fresh = await trackOrder(trackingNumber);
+      if (fresh) setResult(fresh);
+    }, POLL_MS);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result === "not_found" ? null : (result as Order | null)?.id]);
 
   return (
     <div>
@@ -60,7 +74,7 @@ export default function TrackingPage() {
             <MdSearch style={{ color: "var(--color-gray-400)", fontSize: "1.2rem" }} />
             <input
               type="text"
-              placeholder="e.g. SHB-AE-78451236 or ORD-2024-001"
+              placeholder="e.g. MRD-AE-78451236 or ORD-2026-0001"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -76,32 +90,9 @@ export default function TrackingPage() {
             />
           </div>
         </div>
-        <button className="btn btn--primary" onClick={handleSearch} style={{ alignSelf: "flex-end" }}>
-          <MdSearch /> Track
+        <button className="btn btn--primary" onClick={handleSearch} disabled={loading} style={{ alignSelf: "flex-end" }}>
+          <MdSearch /> {loading ? "Searching…" : "Track"}
         </button>
-      </div>
-
-      {/* Sample Numbers */}
-      <div style={{ marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "0.8rem", color: "var(--color-gray-400)" }}>Try:</span>
-        {["SHB-AE-78451236", "SHB-AE-78451237", "ORD-2025-005"].map((sample) => (
-          <button
-            key={sample}
-            onClick={() => { setQuery(sample); }}
-            style={{
-              background: "none",
-              border: "1px solid var(--color-gray-200)",
-              borderRadius: "9999px",
-              padding: "0.2rem 0.75rem",
-              fontSize: "0.75rem",
-              color: "var(--color-navy-600)",
-              cursor: "pointer",
-              fontFamily: "var(--font-body)",
-            }}
-          >
-            {sample}
-          </button>
-        ))}
       </div>
 
       {/* Results */}
@@ -122,10 +113,10 @@ export default function TrackingPage() {
             <div>
               <div className="tracking-result__number">{result.trackingNumber}</div>
               <div className="tracking-result__route">
-                {result.origin} → {result.destination}
+                {result.fromCity} → {result.toCity}
               </div>
               <div style={{ fontSize: "0.8rem", color: "var(--color-gray-400)", marginTop: "0.25rem" }}>
-                {result.service} &nbsp;•&nbsp; {result.cargoType} &nbsp;•&nbsp; {result.weight}
+                {result.cargoType} &nbsp;•&nbsp; Order {result.orderNumber}
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
@@ -133,14 +124,7 @@ export default function TrackingPage() {
                 {statusLabels[result.status]}
               </span>
               <div style={{ fontSize: "0.8rem", color: "var(--color-gray-500)", marginTop: "0.5rem" }}>
-                Est. Delivery:{" "}
-                <strong>
-                  {new Date(result.estimatedDelivery).toLocaleDateString("en-AE", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </strong>
+                Agreed rate: <strong>{result.agreedRate != null ? `AED ${result.agreedRate.toLocaleString()}` : "Awaiting quote"}</strong>
               </div>
             </div>
           </div>
@@ -153,10 +137,10 @@ export default function TrackingPage() {
 
             {/* Horizontal visual timeline */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: "0", overflowX: "auto", paddingBottom: "0.5rem" }}>
-              {result.timeline.map((step, i) => {
+              {buildOrderTimeline(result).map((step, i, timeline) => {
                 const isCompleted = step.completed;
                 const isCurrent =
-                  !step.completed && i > 0 && result.timeline[i - 1]?.completed && result.status !== "cancelled";
+                  !step.completed && i > 0 && timeline[i - 1]?.completed && result.status !== "cancelled";
                 return (
                   <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", minWidth: 90 }}>
                     <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
@@ -188,11 +172,11 @@ export default function TrackingPage() {
                       }}>
                         {isCompleted ? <MdCheck /> : i + 1}
                       </div>
-                      {i < result.timeline.length - 1 && (
+                      {i < timeline.length - 1 && (
                         <div style={{
                           flex: 1,
                           height: 2,
-                          background: result.timeline[i + 1]?.completed
+                          background: timeline[i + 1]?.completed
                             ? "var(--color-success)"
                             : "var(--color-gray-200)",
                         }} />
@@ -217,7 +201,7 @@ export default function TrackingPage() {
           {/* Map Placeholder */}
           <div className="tracking-map-placeholder">
             <MdLocationOn style={{ fontSize: "1.5rem" }} />
-            <span>Interactive map coming soon — live GPS tracking</span>
+            <span>Live status — refreshes automatically every few seconds</span>
           </div>
         </div>
       )}

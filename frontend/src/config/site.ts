@@ -9,10 +9,10 @@ export const siteConfig = {
   url: siteUrl,
 
   contact: {
-    phone: "+971 50 123 4567",
-    email: "info@shebocargo.com",
+    phone: "+971527540249",
+    email: "itxsheboo@gmail.com",
     whatsapp: "+971527540249",
-    address: "Office 301, Al Quoz Industrial Area 3, Dubai, UAE",
+    address: "Hor Al Anz East, Abu Hail, Dubai, UAE",
   },
 
   social: {
@@ -26,9 +26,9 @@ export const siteConfig = {
 
   maps: {
     embedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.178510889914!2d55.2374!3d25.1972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDExJzUwLjAiTiA1NcKwMTQnMTQuNiJF!5e0!3m2!1sen!2sae!4v1234567890",
-    lat: 25.1972,
-    lng: 55.2374,
+      "https://maps.google.com/maps?q=Hor%20Al%20Anz%20East%2C%20Abu%20Hail%2C%20Dubai%2C%20UAE&t=&z=14&ie=UTF8&iwloc=&output=embed",
+    lat: 25.2789,
+    lng: 55.3372,
   },
 
   stats: [

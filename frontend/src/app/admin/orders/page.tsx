@@ -50,17 +50,27 @@ export default function AdminOrdersPage() {
   const load = useCallback(() => {
     listAllOrders(getToken())
       .then(setOrders)
-      .catch(() => setOrders([]));
-  }, []);
+      .catch((err) => {
+        setOrders([]);
+        addToast(
+          "error",
+          "Could not load orders",
+          err instanceof Error ? err.message : "Please refresh and try again.",
+        );
+      });
+  }, [addToast]);
 
   useEffect(() => {
     load();
     const handler = () => load();
     window.addEventListener(ORDERS_UPDATED_EVENT, handler);
     window.addEventListener("storage", handler);
+    // Poll so admin sees orders placed/updated elsewhere without a manual refresh.
+    const interval = setInterval(load, 10000);
     return () => {
       window.removeEventListener(ORDERS_UPDATED_EVENT, handler);
       window.removeEventListener("storage", handler);
+      clearInterval(interval);
     };
   }, [load]);
 
@@ -74,22 +84,46 @@ export default function AdminOrdersPage() {
 
   const handleAccept = async (o: Order) => {
     const next: OrderStatus = o.status === "pending" ? "processing" : "in_transit";
-    await updateOrderStatus(o.id, next, getToken());
-    addToast("success", "Order accepted", `Order ${o.orderNumber} set to ${label(next)}.`);
-    load();
+    try {
+      await updateOrderStatus(o.id, next, getToken());
+      addToast("success", "Order accepted", `Order ${o.orderNumber} set to ${label(next)}.`);
+      load();
+    } catch (err) {
+      addToast(
+        "error",
+        "Could not accept order",
+        err instanceof Error ? err.message : "Please try again.",
+      );
+    }
   };
 
   const handleReject = async (o: Order) => {
-    await updateOrderStatus(o.id, "cancelled", getToken());
-    addToast("error", "Order rejected", `Order ${o.orderNumber} has been cancelled.`);
-    load();
+    try {
+      await updateOrderStatus(o.id, "cancelled", getToken());
+      addToast("error", "Order rejected", `Order ${o.orderNumber} has been cancelled.`);
+      load();
+    } catch (err) {
+      addToast(
+        "error",
+        "Could not reject order",
+        err instanceof Error ? err.message : "Please try again.",
+      );
+    }
   };
 
   const handleStatusChange = async (o: Order, newStatus: OrderStatus) => {
-    await updateOrderStatus(o.id, newStatus, getToken());
-    addToast("info", "Status updated", `Order ${o.orderNumber} set to ${label(newStatus)}.`);
-    setEditingOrderId(null);
-    load();
+    try {
+      await updateOrderStatus(o.id, newStatus, getToken());
+      addToast("info", "Status updated", `Order ${o.orderNumber} set to ${label(newStatus)}.`);
+      setEditingOrderId(null);
+      load();
+    } catch (err) {
+      addToast(
+        "error",
+        "Could not update status",
+        err instanceof Error ? err.message : "Please try again.",
+      );
+    }
   };
 
   const handleSavePrice = async (o: Order) => {
@@ -98,10 +132,18 @@ export default function AdminOrdersPage() {
       addToast("error", "Invalid rate", "Please enter a valid amount.");
       return;
     }
-    await updateOrderRate(o.id, newPrice, getToken());
-    addToast("success", "Rate saved", `Order ${o.orderNumber} rate set to AED ${newPrice.toLocaleString()}.`);
-    setEditingPriceId(null);
-    load();
+    try {
+      await updateOrderRate(o.id, newPrice, getToken());
+      addToast("success", "Rate saved", `Order ${o.orderNumber} rate set to AED ${newPrice.toLocaleString()}.`);
+      setEditingPriceId(null);
+      load();
+    } catch (err) {
+      addToast(
+        "error",
+        "Could not save rate",
+        err instanceof Error ? err.message : "Please try again.",
+      );
+    }
   };
 
   return (
@@ -253,6 +295,9 @@ export default function AdminOrdersPage() {
                   >
                     <td style={{ padding: "1rem 0.75rem", fontWeight: 700, color: "var(--color-navy-800)" }}>
                       {o.orderNumber}
+                      <span style={{ display: "block", fontSize: "0.7rem", color: "var(--color-gold-600)", fontWeight: 600, marginTop: "2px", letterSpacing: "0.02em" }}>
+                        {o.trackingNumber}
+                      </span>
                     </td>
                     <td style={{ padding: "1rem 0.75rem" }}>
                       <div style={{ fontWeight: 600 }}>{o.fullName}</div>
@@ -294,16 +339,22 @@ export default function AdminOrdersPage() {
                         </div>
                       ) : (
                         <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                          <span style={{ fontWeight: 700, color: "var(--color-navy-900)" }}>
-                            AED {o.agreedRate.toLocaleString()}
-                          </span>
+                          {o.agreedRate != null ? (
+                            <span style={{ fontWeight: 700, color: "var(--color-navy-900)" }}>
+                              AED {o.agreedRate.toLocaleString()}
+                            </span>
+                          ) : (
+                            <span style={{ fontWeight: 700, color: "var(--color-gold-600)", fontSize: "0.8rem" }}>
+                              Set rate
+                            </span>
+                          )}
                           <button
                             onClick={() => {
                               setEditingPriceId(o.id);
-                              setTempPrice(o.agreedRate.toString());
+                              setTempPrice(o.agreedRate != null ? o.agreedRate.toString() : "");
                             }}
                             style={{ background: "none", border: "none", color: "var(--color-gray-400)", cursor: "pointer", display: "inline-flex", padding: "0.25rem" }}
-                            title="Edit rate"
+                            title={o.agreedRate != null ? "Edit rate" : "Set rate"}
                           >
                             <MdEdit size={12} />
                           </button>
@@ -436,7 +487,9 @@ export default function AdminOrdersPage() {
                 <Field label="ROUTE" value={`${selectedOrder.fromCity} → ${selectedOrder.toCity}`} />
                 <div>
                   <span style={{ color: "var(--color-gray-400)", display: "block", fontSize: "0.75rem", fontWeight: 700 }}>AGREED RATE</span>
-                  <span style={{ fontWeight: 900, color: "var(--color-gold-700)" }}>AED {selectedOrder.agreedRate.toLocaleString()}</span>
+                  <span style={{ fontWeight: 900, color: "var(--color-gold-700)" }}>
+                    {selectedOrder.agreedRate != null ? `AED ${selectedOrder.agreedRate.toLocaleString()}` : "Not set yet"}
+                  </span>
                 </div>
                 <Field label="PLACED ON" value={new Date(selectedOrder.createdAt).toLocaleString()} />
                 <div>

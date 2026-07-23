@@ -20,10 +20,13 @@ import { AppService } from './app.service';
       isGlobal: true,
     }),
 
-    // Rate Limiting (100 requests per 15 minutes by default)
+    // Rate Limiting. The admin/tracking/order pages poll every few seconds for
+    // near-real-time updates, so the ceiling needs real headroom above that
+    // baseline traffic — a 100-per-15-minutes cap throttles normal usage almost
+    // immediately once more than one tab is open.
     ThrottlerModule.forRoot([{
-      ttl: 60000 * 15,
-      limit: 100,
+      ttl: 60000,
+      limit: 120,
     }]),
 
     // Core Database Module
