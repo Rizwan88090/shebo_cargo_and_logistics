@@ -1,5 +1,8 @@
-import { IconType } from "react-icons";
-import { MdFlight, MdDirectionsBoat, MdLocalShipping, MdHome, MdBusiness } from "react-icons/md";
+export interface TrailerType {
+  name: string;
+  icon: string;
+  description: string;
+}
 
 export interface Service {
   slug: string;
@@ -11,6 +14,7 @@ export interface Service {
   image: string;
   features: string[];
   process: { step: number; title: string; description: string }[];
+  trailerTypes?: TrailerType[];
 }
 
 export const services: Service[] = [
@@ -191,7 +195,7 @@ export const services: Service[] = [
     shortDescription:
       "GCC-only trailer transport — Flatbed, Curtain Side (Sitara), Box and Reefer trucks with cross-border clearance.",
     icon: "MdLocalShipping",
-    image: "/images/land-cargo.png",
+    image: "/images/car-transporter-real.jpg",
     features: [
       "GCC-only service (UAE, KSA, Qatar, Kuwait, Oman, Bahrain)",
       "Flatbed trailers — machinery, steel & oversized cargo",
@@ -201,6 +205,28 @@ export const services: Service[] = [
       "Full trailer loads & dedicated vehicles",
       "Cross-border GCC customs clearance en route",
       "GPS-tracked fleet with experienced drivers",
+    ],
+    trailerTypes: [
+      {
+        name: "Flatbed Trailer",
+        icon: "MdViewDay",
+        description: "Open-deck trailers built for heavy machinery, steel, pipes, construction material and oversized loads.",
+      },
+      {
+        name: "Curtain Side (Sitara)",
+        icon: "MdViewWeek",
+        description: "Side-loading curtain trailers for palletized and general cargo — quick to load and fully weather-protected.",
+      },
+      {
+        name: "Box Truck",
+        icon: "MdInventory2",
+        description: "Fully enclosed, lockable body for secure, weatherproof transport of valuable and general goods.",
+      },
+      {
+        name: "Reefer Truck",
+        icon: "MdAcUnit",
+        description: "Temperature-controlled trailers keeping chilled and frozen cargo — food, pharma and perishables — at the exact temperature.",
+      },
     ],
     process: [
       { step: 1, title: "Request & Truck Type", description: "Tell us your cargo and pick the trailer: Flatbed, Curtain Side, Box or Reefer." },

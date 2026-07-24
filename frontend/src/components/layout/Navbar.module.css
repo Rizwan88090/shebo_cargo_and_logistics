@@ -227,52 +227,51 @@
   color: inherit;
 }
 
-/* Mobile Nav */
+/* Dimmed backdrop behind the drawer (portaled to <body>) */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 9, 20, 0.6);
+  z-index: 550;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+
+.mobileOverlay.mobileOverlayOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Mobile Nav — side drawer, portaled to <body> (never nested in a
+   backdrop-filtered ancestor, which breaks fixed positioning on iOS WebKit).
+   Solid, opaque background — no backdrop-filter, no will-change / backface
+   compositing hacks that fail to paint on iOS Safari & Chrome. */
 .mobileNav {
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(5, 13, 26, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  z-index: var(--z-overlay);
-  padding-top: 80px;
+  width: min(86%, 400px);
+  max-width: 100vw;
+  background: linear-gradient(160deg, #0b1a30 0%, #050d1a 100%);
+  z-index: 560;
+  padding-top: 72px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-
-  /* iOS fix: use visibility+opacity instead of display:none 
-     display:none -> display:block transitions break paint on iOS WebKit */
-  visibility: hidden;
-  opacity: 0;
+  box-shadow: -18px 0 50px rgba(0, 0, 0, 0.5);
+  border-left: 1px solid rgba(212, 168, 83, 0.12);
   -webkit-transform: translateX(100%);
   transform: translateX(100%);
-  -webkit-transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                      visibility 0s linear 0.35s;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              visibility 0s linear 0.35s;
-  will-change: transform, opacity;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  -webkit-transition: -webkit-transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 
 .mobileNav.mobileNavOpen {
-  visibility: visible;
-  opacity: 1;
   -webkit-transform: translateX(0);
   transform: translateX(0);
-  -webkit-transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                      visibility 0s linear 0s;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              visibility 0s linear 0s;
   pointer-events: auto;
 }
 
@@ -385,6 +384,11 @@
 }
 
 :global(html[dir="rtl"]) .mobileNav {
+  right: auto;
+  left: 0;
+  border-left: none;
+  border-right: 1px solid rgba(212, 168, 83, 0.12);
+  box-shadow: 18px 0 50px rgba(0, 0, 0, 0.5);
   -webkit-transform: translateX(-100%);
   transform: translateX(-100%);
 }
@@ -392,6 +396,11 @@
 :global(html[dir="rtl"]) .mobileNav.mobileNavOpen {
   -webkit-transform: translateX(0);
   transform: translateX(0);
+}
+
+:global(html[dir="rtl"]) .mobileClose {
+  right: auto;
+  left: var(--space-6);
 }
 
 :global(html[dir="rtl"]) .mobileSubmenu {

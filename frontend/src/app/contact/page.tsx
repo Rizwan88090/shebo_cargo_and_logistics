@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { MdPhone, MdEmail, MdLocationOn, MdAccessTime, MdSend } from "react-icons/md";
 import { siteConfig } from "@/config/site";
+import { sendMessage } from "@/lib/messages";
 import styles from "./contact.module.css";
 
 export default function ContactPage() {
@@ -17,20 +18,32 @@ export default function ContactPage() {
   });
 
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus("submitting");
+    setErrorMsg("");
 
-    // Simulate submission API call
-    setTimeout(() => {
+    try {
+      // Delivers straight to the admin panel (live) via the backend Messages API.
+      await sendMessage({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        service: formData.service || undefined,
+        message: formData.message,
+      });
       setFormStatus("success");
       setFormData({ name: "", email: "", phone: "", service: "", message: "" });
-    }, 1500);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setFormStatus("error");
+    }
   };
 
   return (
@@ -232,6 +245,20 @@ export default function ContactPage() {
                         className="form-textarea"
                       />
                     </div>
+
+                    {formStatus === "error" && errorMsg && (
+                      <p
+                        role="alert"
+                        style={{
+                          color: "var(--color-error, #dc2626)",
+                          fontSize: "0.85rem",
+                          fontWeight: 600,
+                          marginBottom: "0.75rem",
+                        }}
+                      >
+                        {errorMsg}
+                      </p>
+                    )}
 
                     <button
                       type="submit"

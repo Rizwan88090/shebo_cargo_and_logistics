@@ -103,11 +103,11 @@ export const en = {
   },
 
   home: {
-    heroBadge: "🌍 Trusted by 10,000+ Clients Worldwide",
+    heroBadge: "🌍 Trusted across the Gulf, Egypt, Iraq & Worldwide",
     heroTitle: "Global Cargo Solutions",
     heroTitleHighlight: "Delivered with Excellence",
     heroSubtitle:
-      "Unstoppable air, sea, and land cargo — powered by a team obsessed with getting it there fast, safe, and on time, every single time. Your cargo, our unbreakable promise.",
+      "From the Gulf to Egypt, Iraq and 50+ countries — unstoppable air, sea and land cargo, delivered fast, safe and right on time, every single time. Your cargo, our unbreakable promise.",
     servicesLabel: "What We Offer",
     servicesTitle: "Our Premium Services",
     servicesSubtitle:
@@ -126,7 +126,7 @@ export const en = {
     ],
     countriesLabel: "Global Reach",
     countriesTitle: "Countries We Serve",
-    countriesSubtitle: "Our extensive network covers major trade routes across the globe.",
+    countriesSubtitle: "From the Gulf, Egypt and Iraq to 50+ countries worldwide — we move your cargo wherever it needs to go.",
     testimonialsLabel: "Testimonials",
     testimonialsTitle: "What Our Clients Say",
     testimonialsSubtitle: "Don't just take our word for it — hear from our satisfied customers.",
@@ -210,6 +210,8 @@ export const en = {
     countryNames: {
       AE: "United Arab Emirates",
       SA: "Saudi Arabia",
+      EG: "Egypt",
+      IQ: "Iraq",
       OM: "Oman",
       QA: "Qatar",
       BH: "Bahrain",
@@ -217,6 +219,9 @@ export const en = {
       IN: "India",
       PK: "Pakistan",
       GB: "United Kingdom",
+      US: "United States",
+      CN: "China",
+      DE: "Germany",
     },
   },
 

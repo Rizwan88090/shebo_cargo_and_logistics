@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
-import { MdFlight, MdDirectionsBoat, MdLocalShipping, MdHome, MdBusiness, MdDirectionsCar, MdWarehouse, MdArrowForward, MdCheckCircle } from "react-icons/md";
+import { MdFlight, MdDirectionsBoat, MdLocalShipping, MdHome, MdBusiness, MdDirectionsCar, MdWarehouse, MdArrowForward, MdCheckCircle, MdViewDay, MdViewWeek, MdInventory2, MdAcUnit } from "react-icons/md";
 import { services } from "@/data/services";
 import styles from "./service-detail.module.css";
 
@@ -17,6 +17,10 @@ const iconMap: Record<string, React.ReactNode> = {
   MdBusiness: <MdBusiness />,
   MdDirectionsCar: <MdDirectionsCar />,
   MdWarehouse: <MdWarehouse />,
+  MdViewDay: <MdViewDay />,
+  MdViewWeek: <MdViewWeek />,
+  MdInventory2: <MdInventory2 />,
+  MdAcUnit: <MdAcUnit />,
 };
 
 interface PageProps {
@@ -136,6 +140,38 @@ export default function ServiceDetailPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {/* Trailer Types Section — only for the trailer service */}
+      {service.trailerTypes && service.trailerTypes.length > 0 && (
+        <section className="section section--light">
+          <div className="container">
+            <div className="section-heading">
+              <span className="section-heading__label">Fleet</span>
+              <h2 className="section-heading__title">Our Trailer Types</h2>
+              <p className="section-heading__subtitle">
+                Whatever you&apos;re moving, we have the right trailer for it — pick the one that fits your cargo.
+              </p>
+            </div>
+
+            <div className={styles.trailerGrid}>
+              {service.trailerTypes.map((type, idx) => (
+                <motion.div
+                  key={type.name}
+                  className={styles.trailerCard}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <div className={styles.trailerIcon}>{iconMap[type.icon]}</div>
+                  <h4 className={styles.trailerName}>{type.name}</h4>
+                  <p className={styles.trailerDesc}>{type.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Process / How It Works Section */}
       <section className="section section--light">

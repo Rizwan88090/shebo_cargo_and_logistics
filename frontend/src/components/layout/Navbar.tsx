@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -16,8 +17,14 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
+
+  // Portal target only exists in the browser — render the drawer after mount.
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,64 +138,82 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      <div className={`${styles.mobileNav} ${isMobileOpen ? styles.mobileNavOpen : ""}`} id="mobile-nav">
-        <button
-          className={styles.mobileClose}
-          onClick={() => setIsMobileOpen(false)}
-          aria-label="Close menu"
-        >
-          <HiX />
-        </button>
-        <nav className={styles.mobileNavInner}>
-          <div className={styles.mobileControls}>
-            <LanguageSwitch />
-          </div>
-          {navigation.map((item) => (
-            <div key={item.href} className={styles.mobileNavItem}>
-              <Link
-                href={item.href}
-                className={`${styles.mobileNavLink} ${
-                  pathname === item.href ? styles.active : ""
-                }`}
-                onClick={() => !item.children && setIsMobileOpen(false)}
+      {/* Mobile Navigation — rendered through a portal to <body>.
+          It MUST NOT live inside <header>: the header has `backdrop-filter`,
+          which on iOS WebKit makes it the containing block for fixed-position
+          descendants, so the drawer would size against the ~70px header instead
+          of the viewport (only the close icon showed). The portal escapes it. */}
+      {mounted &&
+        createPortal(
+          <>
+            <div
+              className={`${styles.mobileOverlay} ${isMobileOpen ? styles.mobileOverlayOpen : ""}`}
+              onClick={() => setIsMobileOpen(false)}
+              aria-hidden="true"
+            />
+            <div
+              className={`${styles.mobileNav} ${isMobileOpen ? styles.mobileNavOpen : ""}`}
+              id="mobile-nav"
+            >
+              <button
+                className={styles.mobileClose}
+                onClick={() => setIsMobileOpen(false)}
+                aria-label="Close menu"
               >
-                {t.nav[item.key as keyof typeof t.nav] || item.label}
-              </Link>
-              {item.children && (
-                <div className={styles.mobileSubmenu}>
-                  {item.children.map((child) => (
-                    <Link
-                      key={child.href}
-                      href={child.href}
-                      className={styles.mobileSubmenuLink}
-                      onClick={() => setIsMobileOpen(false)}
-                    >
-                      {t.nav[child.key as keyof typeof t.nav] || child.label}
-                    </Link>
-                  ))}
+                <HiX />
+              </button>
+              <nav className={styles.mobileNavInner}>
+                <div className={styles.mobileControls}>
+                  <LanguageSwitch />
                 </div>
-              )}
+                {navigation.map((item) => (
+                  <div key={item.href} className={styles.mobileNavItem}>
+                    <Link
+                      href={item.href}
+                      className={`${styles.mobileNavLink} ${
+                        pathname === item.href ? styles.active : ""
+                      }`}
+                      onClick={() => !item.children && setIsMobileOpen(false)}
+                    >
+                      {t.nav[item.key as keyof typeof t.nav] || item.label}
+                    </Link>
+                    {item.children && (
+                      <div className={styles.mobileSubmenu}>
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className={styles.mobileSubmenuLink}
+                            onClick={() => setIsMobileOpen(false)}
+                          >
+                            {t.nav[child.key as keyof typeof t.nav] || child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "1rem" }}>
+                  <Link
+                    href="/login"
+                    className="btn btn-secondary"
+                    onClick={() => setIsMobileOpen(false)}
+                  >
+                    {t.nav.login}
+                  </Link>
+                  <Link
+                    href="/request-quote"
+                    className="btn btn-primary"
+                    onClick={() => setIsMobileOpen(false)}
+                  >
+                    {t.nav.getQuote}
+                  </Link>
+                </div>
+              </nav>
             </div>
-          ))}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "1rem" }}>
-            <Link
-              href="/login"
-              className="btn btn-secondary"
-              onClick={() => setIsMobileOpen(false)}
-            >
-              {t.nav.login}
-            </Link>
-            <Link
-              href="/request-quote"
-              className="btn btn-primary"
-              onClick={() => setIsMobileOpen(false)}
-            >
-              {t.nav.getQuote}
-            </Link>
-          </div>
-        </nav>
-      </div>
+          </>,
+          document.body,
+        )}
     </header>
   );
 }

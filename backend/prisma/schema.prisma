@@ -103,6 +103,19 @@ model Service {
   @@map("services")
 }
 
+model Message {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  service   String?
+  message   String
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("messages")
+}
+
 model Order {
   id             String      @id @default(uuid())
   orderNumber    String      @unique @map("order_number")

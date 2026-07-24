@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -8,12 +8,13 @@ import {
   MdBarChart,
   MdSupportAgent,
   MdListAlt,
-  MdSettings,
+  MdMarkEmailUnread,
   MdLogout,
   MdMenu,
   MdClose,
 } from "react-icons/md";
 import LanguageSwitch from "@/components/ui/LanguageSwitch";
+import { listMessages, MESSAGES_UPDATED_EVENT } from "@/lib/messages";
 import "./admin.css";
 
 const adminSidebarLinks = [
@@ -21,6 +22,7 @@ const adminSidebarLinks = [
   { href: "/admin/analytics", label: "Analytics", icon: <MdBarChart /> },
   { href: "/support", label: "Support Tickets", icon: <MdSupportAgent /> },
   { href: "/admin/orders", label: "Manage Orders", icon: <MdListAlt /> },
+  { href: "/admin/messages", label: "Messages", icon: <MdMarkEmailUnread /> },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -28,6 +30,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
+  const loadUnread = useCallback(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("meridian_token") ?? undefined : undefined;
+    listMessages(token)
+      .then((msgs) => setUnreadMessages(msgs.filter((m) => !m.isRead).length))
+      .catch(() => setUnreadMessages(0));
+  }, []);
+
+  useEffect(() => {
+    loadUnread();
+    const handler = () => loadUnread();
+    window.addEventListener(MESSAGES_UPDATED_EVENT, handler);
+    window.addEventListener("storage", handler);
+    const interval = setInterval(loadUnread, 10000);
+    return () => {
+      window.removeEventListener(MESSAGES_UPDATED_EVENT, handler);
+      window.removeEventListener("storage", handler);
+      clearInterval(interval);
+    };
+  }, [loadUnread]);
 
   const handleLogout = () => {
     try {
@@ -63,7 +86,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               onClick={() => setSidebarOpen(false)}
             >
               <span>{link.icon}</span>
-              <span>{link.label}</span>
+              <span style={{ flex: 1 }}>{link.label}</span>
+              {link.href === "/admin/messages" && unreadMessages > 0 && (
+                <span
+                  style={{
+                    minWidth: "20px",
+                    height: "20px",
+                    padding: "0 6px",
+                    borderRadius: "999px",
+                    background: "var(--color-gold-500, #d4a853)",
+                    color: "#0a1428",
+                    fontSize: "0.7rem",
+                    fontWeight: 800,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {unreadMessages}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

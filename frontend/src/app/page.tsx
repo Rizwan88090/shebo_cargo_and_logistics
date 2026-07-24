@@ -15,11 +15,10 @@ import {
   MdStar,
   MdArrowForward,
   MdCheckCircle,
+  MdInventory2,
 } from "react-icons/md";
 import { services } from "@/data/services";
 import { countries } from "@/data/countries";
-import { reviews } from "@/data/reviews";
-import { faqs } from "@/data/faq";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/config/i18n";
 import Tilt3D from "@/components/ui/Tilt3D";
@@ -134,23 +133,24 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* 3D rotating rings */}
-        <div className={styles.heroRings} aria-hidden="true">
-          <span className={`${styles.ring} ${styles.ring1}`} />
-          <span className={`${styles.ring} ${styles.ring2}`} />
-          <span className={`${styles.ring} ${styles.ring3}`} />
-        </div>
-
-        {/* Floating 3D cube */}
-        <div className={styles.cubeScene} aria-hidden="true">
-          <div className={styles.cube}>
-            <span className={`${styles.cubeFace} ${styles.cubeFront}`}>AIR</span>
-            <span className={`${styles.cubeFace} ${styles.cubeBack}`}>SEA</span>
-            <span className={`${styles.cubeFace} ${styles.cubeRight}`}>LAND</span>
-            <span className={`${styles.cubeFace} ${styles.cubeLeft}`}>MOV</span>
-            <span className={`${styles.cubeFace} ${styles.cubeTop}`} />
-            <span className={`${styles.cubeFace} ${styles.cubeBottom}`} />
-          </div>
+        {/* Elegant floating service badges (replaces the old 3D cube) */}
+        <div className={styles.heroFloat} aria-hidden="true">
+          <span className={`${styles.floatCard} ${styles.floatCard1}`}>
+            <MdFlight />
+            <em>Air</em>
+          </span>
+          <span className={`${styles.floatCard} ${styles.floatCard2}`}>
+            <MdDirectionsBoat />
+            <em>Sea</em>
+          </span>
+          <span className={`${styles.floatCard} ${styles.floatCard3}`}>
+            <MdLocalShipping />
+            <em>Land</em>
+          </span>
+          <span className={`${styles.floatCard} ${styles.floatCard4}`}>
+            <MdInventory2 />
+            <em>Cargo</em>
+          </span>
         </div>
 
         <div className={`container ${styles.heroContent}`}>
@@ -198,16 +198,12 @@ export default function HomePage() {
             </Link>
           </motion.div>
 
-          {/* 3D cube — mobile only, below the hero buttons */}
-          <div className={styles.cubeMobileWrap} aria-hidden="true">
-            <div className={styles.cube}>
-              <span className={`${styles.cubeFace} ${styles.cubeFront}`}>AIR</span>
-              <span className={`${styles.cubeFace} ${styles.cubeBack}`}>SEA</span>
-              <span className={`${styles.cubeFace} ${styles.cubeRight}`}>LAND</span>
-              <span className={`${styles.cubeFace} ${styles.cubeLeft}`}>MOV</span>
-              <span className={`${styles.cubeFace} ${styles.cubeTop}`} />
-              <span className={`${styles.cubeFace} ${styles.cubeBottom}`} />
-            </div>
+          {/* Service badges — mobile row, below the hero buttons */}
+          <div className={styles.heroFloatMobile} aria-hidden="true">
+            <span className={styles.floatChip}><MdFlight /> Air</span>
+            <span className={styles.floatChip}><MdDirectionsBoat /> Sea</span>
+            <span className={styles.floatChip}><MdLocalShipping /> Land</span>
+            <span className={styles.floatChip}><MdInventory2 /> Cargo</span>
           </div>
 
           {/* Floating Stats */}
@@ -252,13 +248,11 @@ export default function HomePage() {
             {services.map((service, index) => (
               <motion.div
                 key={service.slug}
-                initial={{ opacity: 0, y: 40, rotateX: 14 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
                 viewport={{ once: true, margin: "-50px" }}
-                style={{ transformStyle: "preserve-3d" }}
               >
-                <Tilt3D glare max={10} style={{ borderRadius: "var(--radius-xl)" }}>
                 <Link
                   href={`/services/${service.slug}`}
                   className={styles.serviceCard}
@@ -288,7 +282,6 @@ export default function HomePage() {
                     </span>
                   </div>
                 </Link>
-                </Tilt3D>
               </motion.div>
             ))}
           </div>
