@@ -4,7 +4,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import ChatWidget from "@/components/ui/ChatWidget";
-import GoogleReviews from "@/components/ui/GoogleReviews";
 import { LanguageProvider } from "@/config/i18n";
 import { ThemeProvider } from "@/config/theme";
 import { ToastProvider } from "@/components/ui/NotificationToast";
@@ -125,7 +124,6 @@ export default function RootLayout({
               <Footer />
               <WhatsAppButton />
               <ChatWidget />
-              <GoogleReviews />
             </ToastProvider>
           </LanguageProvider>
         </ThemeProvider>

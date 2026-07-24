@@ -32,6 +32,13 @@ export default function ChatWidget() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
 
+  // While the chat is open, hide the WhatsApp FAB (it sits in the same corner
+  // and would otherwise cover the chat's send button — see WhatsAppButton.css).
+  useEffect(() => {
+    document.body.classList.toggle("chat-open", open);
+    return () => document.body.classList.remove("chat-open");
+  }, [open]);
+
   const handleSend = () => {
     const text = input.trim();
     if (!text) return;
