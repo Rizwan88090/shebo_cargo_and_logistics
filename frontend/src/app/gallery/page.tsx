@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdClose, MdZoomIn } from "react-icons/md";
+import { useLanguage } from "@/config/i18n";
 import styles from "./gallery.module.css";
 
 const galleryCategories = ["All", "Freight", "Relocation"];
@@ -69,6 +70,15 @@ const galleryItems = [
 ];
 
 export default function GalleryPage() {
+  const { t } = useLanguage();
+  const tg = t.galleryPage;
+  const catLabel = (cat: string) =>
+    cat === "All" ? tg.catAll : cat === "Freight" ? tg.catFreight : tg.catRelocation;
+  const locTitle = (id: number, fallback: string) =>
+    tg.items[String(id) as keyof typeof tg.items]?.title ?? fallback;
+  const locDesc = (id: number, fallback: string) =>
+    tg.items[String(id) as keyof typeof tg.items]?.description ?? fallback;
+
   const [activeCategory, setActiveCategory] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -102,7 +112,7 @@ export default function GalleryPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Gallery
+            {tg.heroTitle}
           </motion.h1>
           <motion.p
             className="page-hero__subtitle"
@@ -110,12 +120,12 @@ export default function GalleryPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            A visual overview of our logistics operations, premium cargo handling, and relocation setups.
+            {tg.heroSubtitle}
           </motion.p>
           <div className="page-hero__breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{tg.home}</Link>
             <span>/</span>
-            <span>Gallery</span>
+            <span>{tg.gallery}</span>
           </div>
         </div>
       </section>
@@ -136,7 +146,7 @@ export default function GalleryPage() {
                   setLightboxIndex(null);
                 }}
               >
-                {category}
+                {catLabel(category)}
               </button>
             ))}
           </div>
@@ -158,15 +168,15 @@ export default function GalleryPage() {
                   <div className={styles.imageWrapper}>
                     <Image
                       src={item.image}
-                      alt={item.title}
+                      alt={locTitle(item.id, item.title)}
                       width={400}
                       height={280}
                       className={styles.image}
                     />
                     <div className={styles.hoverOverlay}>
                       <MdZoomIn className={styles.zoomIcon} />
-                      <h4 className={styles.itemTitle}>{item.title}</h4>
-                      <span className={styles.itemCategory}>{item.category}</span>
+                      <h4 className={styles.itemTitle}>{locTitle(item.id, item.title)}</h4>
+                      <span className={styles.itemCategory}>{catLabel(item.category)}</span>
                     </div>
                   </div>
                 </motion.div>
@@ -207,15 +217,15 @@ export default function GalleryPage() {
               <div className={styles.lightboxImageContainer}>
                 <Image
                   src={filteredItems[lightboxIndex].image}
-                  alt={filteredItems[lightboxIndex].title}
+                  alt={locTitle(filteredItems[lightboxIndex].id, filteredItems[lightboxIndex].title)}
                   width={800}
                   height={500}
                   className={styles.lightboxImage}
                   style={{ objectFit: "contain" }}
                 />
                 <div className={styles.lightboxCaption}>
-                  <h3>{filteredItems[lightboxIndex].title}</h3>
-                  <p>{filteredItems[lightboxIndex].description}</p>
+                  <h3>{locTitle(filteredItems[lightboxIndex].id, filteredItems[lightboxIndex].title)}</h3>
+                  <p>{locDesc(filteredItems[lightboxIndex].id, filteredItems[lightboxIndex].description)}</p>
                 </div>
               </div>
               <button className={styles.navBtn} onClick={nextImage} aria-label="Next image">

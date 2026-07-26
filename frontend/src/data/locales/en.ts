@@ -342,6 +342,96 @@ export const en = {
     requestFreeQuote: "Request a Free Quote",
   },
 
+  /* — About page — */
+  aboutPage: {
+    heroTitle: "About Us",
+    heroSubtitle:
+      "Learn more about Shebo Cargo & Logistics and our journey to becoming a global logistics leader.",
+    home: "Home",
+    about: "About",
+    storyLabel: "Our Story",
+    storyTitle: "Fifteen Years of Logistics Excellence",
+    storyP1:
+      "At Shebo Cargo & Logistics, we started with a simple vision: to make cargo transportation reliable, efficient, and stress-free. Over the last 15 years, we have grown from a small local delivery service to an international freight forwarding and relocation powerhouse.",
+    storyP2:
+      "Today, our global logistics network spans over 50 countries, facilitating seamless trade and relocation services for businesses and individuals alike. Our team of experienced logistics professionals and state-of-the-art tracking systems guarantee that your cargo is always in safe hands.",
+    bullet1: "Licensed and fully insured operations",
+    bullet2: "24/7 dedicated customer care and support",
+    bullet3: "Customs clearance experts at all major ports",
+    missionTitle: "Our Mission",
+    missionText:
+      "To connect businesses and communities globally by delivering fast, secure, and cost-effective logistics and relocation services. We aim to exceed expectations through our operations, integrity, and dedication to excellence.",
+    visionTitle: "Our Vision",
+    visionText:
+      "To be recognized as the world's most reliable and innovative cargo and logistics partner, driving sustainable growth and providing seamless supply chain experiences for our customers worldwide.",
+    valuesLabel: "Values",
+    valuesTitle: "Our Core Values",
+    valuesSub:
+      "The fundamental principles that guide our business operations, decisions, and relationships daily.",
+    values: [
+      { title: "Reliability", desc: "We deliver on our promises. Your cargo is handled with utmost security and timeliness." },
+      { title: "Efficiency", desc: "Optimized routes and streamlined customs procedures ensure maximum speed and cost efficiency." },
+      { title: "Customer Centricity", desc: "Tailored logistics solutions and dedicated 24/7 customer support to make shipping hassle-free." },
+      { title: "Safety First", desc: "Comprehensive cargo protection, modern GPS-tracked fleets, and fully insured operations." },
+    ],
+    timelineLabel: "Timeline",
+    timelineTitle: "Our Journey So Far",
+    timelineSub: "Take a quick look at the milestones that shaped Shebo Cargo & Logistics over the years.",
+    timeline: [
+      { year: "2011", title: "Company Founded", desc: "Started with a single truck and local delivery services in Dubai." },
+      { year: "2015", title: "GCC Expansion", desc: "Extended services to Oman, Saudi Arabia, and Kuwait with cross-border land shipping." },
+      { year: "2019", title: "Global Air & Sea Hub", desc: "Partnered with top airlines and container carriers to launch global sea and air cargo." },
+      { year: "2023", title: "Digital Logistics", desc: "Launched smart GPS tracking and advanced customer quote portals." },
+    ],
+    ctaTitle: "Need Help With Shipping or Moving?",
+    ctaSub: "Get in touch with our team today and let us handle your logistical challenge with ease.",
+    requestFreeQuote: "Request a Free Quote",
+    contactUs: "Contact Us",
+  },
+
+  /* — Reviews page — */
+  reviewsPage: {
+    heroTitle: "Customer Reviews",
+    heroSubtitle:
+      "What our corporate partners and individual clients say about our logistics services.",
+    home: "Home",
+    reviews: "Reviews",
+    overallRating: "Overall Rating",
+    basedOn: "Based on {n} reviews",
+    starWord: "Star",
+    shareTitle: "Share Your Experience",
+    shareText: "Have you used our services? We would love to hear your feedback.",
+    leaveReview: "Leave a Review",
+    allReviews: "All Reviews ({n})",
+    starsTab: "{n} Stars ({c})",
+    ctaTitle: "Experience Our Top-Rated Services",
+    ctaSub:
+      "Join thousands of satisfied clients who trust Shebo Cargo for their global logistics and moving needs.",
+    requestFreeQuote: "Request a Free Quote",
+  },
+
+  /* — Gallery page — */
+  galleryPage: {
+    heroTitle: "Gallery",
+    heroSubtitle:
+      "A visual overview of our logistics operations, premium cargo handling, and relocation setups.",
+    home: "Home",
+    gallery: "Gallery",
+    catAll: "All",
+    catFreight: "Freight",
+    catRelocation: "Relocation",
+    items: {
+      "1": { title: "Air Cargo Loading", description: "Express shipping cargo being loaded onto plane safely." },
+      "2": { title: "Vessel Ocean Transit", description: "Massive container ship carrying cargo goods internationally." },
+      "3": { title: "Premium Villa Relocation", description: "Professional residential move packing & truck shifting." },
+      "4": { title: "Corporate Office Shifting", description: "Systematic office desk and computer infrastructure move." },
+      "5": { title: "Land Freight Dispatch", description: "GPS-enabled cargo container trucks departing for GCC transit." },
+      "6": { title: "Car Shipping Transporter", description: "Dedicated auto transporter truck loaded with cars, fully branded with Shebo Cargo & Logistics." },
+      "7": { title: "Secure Warehouse Facility", description: "High-tech climate-controlled warehouse with 24/7 CCTV and bonded storage facilities." },
+      "8": { title: "Global Logistics Hub", description: "Overview of port operations and massive container yard distribution." },
+    },
+  },
+
   /* — Blog — */
   blog: {
     title: "Our Blog",

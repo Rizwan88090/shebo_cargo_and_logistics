@@ -5,17 +5,35 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdStar, MdArrowForward, MdRateReview } from "react-icons/md";
 import { reviews, getAverageRating } from "@/data/reviews";
+import { reviewTranslationsAr } from "@/data/reviewsI18n";
+import { serviceTagAr } from "@/data/countriesI18n";
+import { useLanguage } from "@/config/i18n";
 import styles from "./reviews.module.css";
 
 export default function ReviewsPage() {
+  const { t, locale } = useLanguage();
+  const tr = t.reviewsPage;
+  const isAr = locale === "ar";
   const [selectedRating, setSelectedRating] = useState<number | "All">("All");
 
   const averageRating = getAverageRating();
 
+  // Localize review content (text / generic company / service label) for Arabic.
+  const localizedReviews = reviews.map((r) => {
+    if (!isAr) return r;
+    const ov = reviewTranslationsAr[r.id];
+    return {
+      ...r,
+      text: ov?.text ?? r.text,
+      company: ov?.company ?? r.company,
+      service: serviceTagAr[r.service] ?? r.service,
+    };
+  });
+
   const filteredReviews =
     selectedRating === "All"
-      ? reviews
-      : reviews.filter((r) => r.rating === selectedRating);
+      ? localizedReviews
+      : localizedReviews.filter((r) => r.rating === selectedRating);
 
   // Compute distribution of stars
   const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => {
@@ -35,7 +53,7 @@ export default function ReviewsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Customer Reviews
+            {tr.heroTitle}
           </motion.h1>
           <motion.p
             className="page-hero__subtitle"
@@ -43,12 +61,12 @@ export default function ReviewsPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            What our corporate partners and individual clients say about our logistics services.
+            {tr.heroSubtitle}
           </motion.p>
           <div className="page-hero__breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{tr.home}</Link>
             <span>/</span>
-            <span>Reviews</span>
+            <span>{tr.reviews}</span>
           </div>
         </div>
       </section>
@@ -60,7 +78,7 @@ export default function ReviewsPage() {
             {/* Reviews Metrics Sidebar */}
             <div className={styles.sidebarColumn}>
               <div className={styles.ratingCard}>
-                <h3 className={styles.cardHeading}>Overall Rating</h3>
+                <h3 className={styles.cardHeading}>{tr.overallRating}</h3>
                 <div className={styles.ratingScore}>{averageRating}</div>
                 <div className={styles.starsWrapper}>
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -74,7 +92,7 @@ export default function ReviewsPage() {
                     />
                   ))}
                 </div>
-                <p className={styles.reviewsCount}>Based on {reviews.length} reviews</p>
+                <p className={styles.reviewsCount}>{tr.basedOn.replace("{n}", String(reviews.length))}</p>
 
                 {/* Rating Distribution */}
                 <div className={styles.distributionList}>
@@ -90,7 +108,7 @@ export default function ReviewsPage() {
                         )
                       }
                     >
-                      <span className={styles.distLabel}>{dist.stars} Star</span>
+                      <span className={styles.distLabel}>{dist.stars} {tr.starWord}</span>
                       <div className={styles.progressBarWrapper}>
                         <div
                           className={styles.progressBar}
@@ -106,10 +124,10 @@ export default function ReviewsPage() {
               {/* Leave Review Cta */}
               <div className={styles.writeReviewCard}>
                 <MdRateReview className={styles.writeIcon} />
-                <h3>Share Your Experience</h3>
-                <p>Have you used our services? We would love to hear your feedback.</p>
+                <h3>{tr.shareTitle}</h3>
+                <p>{tr.shareText}</p>
                 <Link href="/contact" className="btn btn-outline" style={{ width: "100%" }}>
-                  Leave a Review
+                  {tr.leaveReview}
                 </Link>
               </div>
             </div>
@@ -124,7 +142,7 @@ export default function ReviewsPage() {
                   }`}
                   onClick={() => setSelectedRating("All")}
                 >
-                  All Reviews ({reviews.length})
+                  {tr.allReviews.replace("{n}", String(reviews.length))}
                 </button>
                 {[5, 4, 3, 2, 1].map((stars) => {
                   const count = reviews.filter((r) => r.rating === stars).length;
@@ -137,7 +155,7 @@ export default function ReviewsPage() {
                       }`}
                       onClick={() => setSelectedRating(stars)}
                     >
-                      {stars} Stars ({count})
+                      {tr.starsTab.replace("{n}", String(stars)).replace("{c}", String(count))}
                     </button>
                   );
                 })}
@@ -190,13 +208,13 @@ export default function ReviewsPage() {
       <section className="section section--dark" style={{ textAlign: "center" }}>
         <div className="container">
           <h2 className="section-heading__title" style={{ color: "var(--color-white)" }}>
-            Experience Our Top-Rated Services
+            {tr.ctaTitle}
           </h2>
           <p className="section-heading__subtitle" style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "var(--space-8)" }}>
-            Join thousands of satisfied clients who trust Shebo Cargo for their global logistics and moving needs.
+            {tr.ctaSub}
           </p>
           <Link href="/request-quote" className="btn btn-primary btn-lg">
-            Request a Free Quote <MdArrowForward />
+            {tr.requestFreeQuote} <MdArrowForward style={{ transform: isAr ? "rotate(180deg)" : "none" }} />
           </Link>
         </div>
       </section>
