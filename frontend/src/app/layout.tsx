@@ -69,9 +69,13 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
-  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
-    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
-    : undefined,
+  // Google Search Console verification. Env var wins; the committed fallback is
+  // the site's real code so a plain `git pull` + build keeps the site verified.
+  verification: {
+    google:
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+      "KCqUpSiBNNhGsH_D-2nsA3m05VpvHoVIuEwIWTOAmjg",
+  },
 };
 
 const jsonLd = {
