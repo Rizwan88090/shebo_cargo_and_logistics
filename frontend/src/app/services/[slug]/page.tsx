@@ -7,6 +7,8 @@ import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
 import { MdFlight, MdDirectionsBoat, MdLocalShipping, MdHome, MdBusiness, MdDirectionsCar, MdWarehouse, MdArrowForward, MdCheckCircle, MdViewDay, MdViewWeek, MdInventory2, MdAcUnit } from "react-icons/md";
 import { services } from "@/data/services";
+import { localizeService } from "@/data/servicesI18n";
+import { useLanguage } from "@/config/i18n";
 import styles from "./service-detail.module.css";
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -29,11 +31,15 @@ interface PageProps {
 
 export default function ServiceDetailPage({ params }: PageProps) {
   const resolvedParams = use(params);
-  const service = services.find((s) => s.slug === resolvedParams.slug);
+  const { t, locale } = useLanguage();
+  const tsp = t.servicesPage;
+  const base = services.find((s) => s.slug === resolvedParams.slug);
 
-  if (!service) {
+  if (!base) {
     notFound();
   }
+
+  const service = localizeService(base, locale);
 
   return (
     <>
@@ -65,9 +71,9 @@ export default function ServiceDetailPage({ params }: PageProps) {
             {service.shortDescription}
           </motion.p>
           <div className="page-hero__breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{tsp.home}</Link>
             <span>/</span>
-            <Link href="/services">Services</Link>
+            <Link href="/services">{tsp.services}</Link>
             <span>/</span>
             <span>{service.shortTitle}</span>
           </div>
@@ -85,10 +91,10 @@ export default function ServiceDetailPage({ params }: PageProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className={styles.sectionTitle}>Overview</h2>
+              <h2 className={styles.sectionTitle}>{tsp.overview}</h2>
               <p className={styles.paragraph}>{service.description}</p>
 
-              <h3 className={styles.subsectionTitle}>Key Features & Benefits</h3>
+              <h3 className={styles.subsectionTitle}>{tsp.keyFeaturesBenefits}</h3>
               <div className={styles.featuresGrid}>
                 {service.features.map((feature) => (
                   <div key={feature} className={styles.featureItem}>
@@ -117,23 +123,21 @@ export default function ServiceDetailPage({ params }: PageProps) {
               </div>
 
               <div className={styles.ctaCard}>
-                <h3 className={styles.ctaTitle}>Need {service.shortTitle}?</h3>
-                <p className={styles.ctaText}>
-                  Get an instant customized rate estimation for your cargo shipping or shifting requirements.
-                </p>
+                <h3 className={styles.ctaTitle}>{tsp.needPrefix}{service.shortTitle}{tsp.needSuffix}</h3>
+                <p className={styles.ctaText}>{tsp.ctaText}</p>
                 <Link
                   href={`/request-quote?service=${service.slug}`}
                   className="btn btn-primary"
                   style={{ width: "100%" }}
                 >
-                  Request a Quote <MdArrowForward />
+                  {tsp.requestQuote} <MdArrowForward style={{ transform: locale === "ar" ? "rotate(180deg)" : "none" }} />
                 </Link>
                 <Link
                   href="/contact"
                   className="btn btn-outline"
                   style={{ width: "100%", marginTop: "var(--space-3)" }}
                 >
-                  Contact Expert
+                  {tsp.contactExpert}
                 </Link>
               </div>
             </motion.div>
@@ -146,11 +150,9 @@ export default function ServiceDetailPage({ params }: PageProps) {
         <section className="section section--light">
           <div className="container">
             <div className="section-heading">
-              <span className="section-heading__label">Fleet</span>
-              <h2 className="section-heading__title">Our Trailer Types</h2>
-              <p className="section-heading__subtitle">
-                Whatever you&apos;re moving, we have the right trailer for it — pick the one that fits your cargo.
-              </p>
+              <span className="section-heading__label">{tsp.fleetLabel}</span>
+              <h2 className="section-heading__title">{tsp.trailerTypesTitle}</h2>
+              <p className="section-heading__subtitle">{tsp.trailerTypesSub}</p>
             </div>
 
             <div className={styles.trailerGrid}>
@@ -177,11 +179,9 @@ export default function ServiceDetailPage({ params }: PageProps) {
       <section className="section section--light">
         <div className="container">
           <div className="section-heading">
-            <span className="section-heading__label">Process</span>
-            <h2 className="section-heading__title">How It Works</h2>
-            <p className="section-heading__subtitle">
-              Our streamlined step-by-step procedure ensures seamless service execution from start to finish.
-            </p>
+            <span className="section-heading__label">{tsp.processLabel}</span>
+            <h2 className="section-heading__title">{tsp.howItWorks}</h2>
+            <p className="section-heading__subtitle">{tsp.howItWorksSub}</p>
           </div>
 
           <div className={styles.processGrid}>
@@ -207,13 +207,13 @@ export default function ServiceDetailPage({ params }: PageProps) {
       <section className="section section--dark">
         <div className="container">
           <div className={styles.subnavInner}>
-            <h3 className={styles.subnavTitle}>Explore Other Services</h3>
+            <h3 className={styles.subnavTitle}>{tsp.exploreOther}</h3>
             <div className={styles.subnavLinks}>
               {services
                 .filter((s) => s.slug !== service.slug)
                 .map((s) => (
                   <Link key={s.slug} href={`/services/${s.slug}`} className={styles.subnavLink}>
-                    {s.shortTitle}
+                    {localizeService(s, locale).shortTitle}
                   </Link>
                 ))}
             </div>

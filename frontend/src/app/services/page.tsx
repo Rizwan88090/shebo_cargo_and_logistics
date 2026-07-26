@@ -5,6 +5,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { MdFlight, MdDirectionsBoat, MdLocalShipping, MdHome, MdBusiness, MdDirectionsCar, MdWarehouse, MdArrowForward } from "react-icons/md";
 import { services } from "@/data/services";
+import { localizeService } from "@/data/servicesI18n";
+import { useLanguage } from "@/config/i18n";
 import styles from "./services.module.css";
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -18,6 +20,9 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 export default function ServicesPage() {
+  const { t, locale } = useLanguage();
+  const tsp = t.servicesPage;
+
   return (
     <>
       {/* Page Hero */}
@@ -29,7 +34,7 @@ export default function ServicesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Our Services
+            {tsp.heroTitle}
           </motion.h1>
           <motion.p
             className="page-hero__subtitle"
@@ -37,12 +42,12 @@ export default function ServicesPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            We offer specialized logistical solutions to ensure your goods and assets are delivered on time, every time.
+            {tsp.heroSubtitle}
           </motion.p>
           <div className="page-hero__breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{tsp.home}</Link>
             <span>/</span>
-            <span>Services</span>
+            <span>{tsp.services}</span>
           </div>
         </div>
       </section>
@@ -51,7 +56,9 @@ export default function ServicesPage() {
       <section className="section">
         <div className="container">
           <div className={styles.servicesList}>
-            {services.map((service, index) => (
+            {services.map((base, index) => {
+              const service = localizeService(base, locale);
+              return (
               <motion.div
                 key={service.slug}
                 className={`${styles.serviceRow} ${index % 2 !== 0 ? styles.rowReverse : ""}`}
@@ -79,7 +86,7 @@ export default function ServicesPage() {
                   <h2 className={styles.serviceTitle}>{service.title}</h2>
                   <p className={styles.serviceDesc}>{service.description}</p>
 
-                  <h4 className={styles.featuresHeading}>Key Features:</h4>
+                  <h4 className={styles.featuresHeading}>{tsp.keyFeaturesShort}</h4>
                   <ul className={styles.featuresList}>
                     {service.features.slice(0, 4).map((feature) => (
                       <li key={feature} className={styles.featureItem}>
@@ -91,18 +98,19 @@ export default function ServicesPage() {
 
                   <div className={styles.actions}>
                     <Link href={`/services/${service.slug}`} className="btn btn-primary">
-                      View Details <MdArrowForward />
+                      {tsp.viewDetails} <MdArrowForward style={{ transform: locale === "ar" ? "rotate(180deg)" : "none" }} />
                     </Link>
                     <Link
                       href={`/request-quote?service=${service.slug}`}
                       className="btn btn-outline"
                     >
-                      Book Now
+                      {tsp.bookNow}
                     </Link>
                   </div>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

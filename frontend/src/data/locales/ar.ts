@@ -228,6 +228,34 @@ export const ar: typeof en = {
     },
   },
 
+  /* — Services (listing + detail pages) — */
+  servicesPage: {
+    heroTitle: "خدماتنا",
+    heroSubtitle:
+      "نقدّم حلولاً لوجستية متخصّصة لضمان تسليم بضائعك وممتلكاتك في الوقت المحدد، في كل مرة.",
+    home: "الرئيسية",
+    services: "الخدمات",
+    keyFeaturesShort: "أهم المميزات:",
+    viewDetails: "عرض التفاصيل",
+    bookNow: "احجز الآن",
+    overview: "نظرة عامة",
+    keyFeaturesBenefits: "أهم المميزات والفوائد",
+    processLabel: "آلية العمل",
+    howItWorks: "كيف نعمل",
+    howItWorksSub:
+      "إجراؤنا المنظّم خطوة بخطوة يضمن تنفيذ الخدمة بسلاسة من البداية إلى النهاية.",
+    fleetLabel: "الأسطول",
+    trailerTypesTitle: "أنواع المقطورات لدينا",
+    trailerTypesSub:
+      "مهما كان ما تنقله، لدينا المقطورة المناسبة له — اختر ما يناسب بضاعتك.",
+    needPrefix: "هل تحتاج إلى ",
+    needSuffix: "؟",
+    ctaText: "احصل على تقدير فوري ومخصّص لأسعار شحن أو نقل بضائعك.",
+    requestQuote: "اطلب عرض سعر",
+    contactExpert: "تواصل مع خبير",
+    exploreOther: "استكشف خدمات أخرى",
+  },
+
   /* — Blog — */
   blog: {
     title: "مدونتنا",

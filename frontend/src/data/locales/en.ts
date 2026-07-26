@@ -225,6 +225,35 @@ export const en = {
     },
   },
 
+  /* — Services (listing + detail pages) — */
+  servicesPage: {
+    heroTitle: "Our Services",
+    heroSubtitle:
+      "We offer specialized logistical solutions to ensure your goods and assets are delivered on time, every time.",
+    home: "Home",
+    services: "Services",
+    keyFeaturesShort: "Key Features:",
+    viewDetails: "View Details",
+    bookNow: "Book Now",
+    overview: "Overview",
+    keyFeaturesBenefits: "Key Features & Benefits",
+    processLabel: "Process",
+    howItWorks: "How It Works",
+    howItWorksSub:
+      "Our streamlined step-by-step procedure ensures seamless service execution from start to finish.",
+    fleetLabel: "Fleet",
+    trailerTypesTitle: "Our Trailer Types",
+    trailerTypesSub:
+      "Whatever you're moving, we have the right trailer for it — pick the one that fits your cargo.",
+    needPrefix: "Need ",
+    needSuffix: "?",
+    ctaText:
+      "Get an instant customized rate estimation for your cargo shipping or shifting requirements.",
+    requestQuote: "Request a Quote",
+    contactExpert: "Contact Expert",
+    exploreOther: "Explore Other Services",
+  },
+
   /* — Blog — */
   blog: {
     title: "Our Blog",
