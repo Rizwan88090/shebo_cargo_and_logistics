@@ -256,6 +256,94 @@ export const ar: typeof en = {
     exploreOther: "استكشف خدمات أخرى",
   },
 
+  /* — Countries page — */
+  countriesPage: {
+    heroTitle: "الدول التي نخدمها",
+    heroSubtitle:
+      "بفضل طرق الشحن الرئيسية والمراكز اللوجستية العالمية، نوفّر نقلاً سلساً إلى أكثر من 50 دولة.",
+    home: "الرئيسية",
+    countries: "الدول",
+    networkLabel: "شبكة عالمية",
+    destinationsTitle: "وجهاتنا",
+    destinationsSub:
+      "نقدّم خدمات نقل شحن جوي وبحري وبري كاملة لمجموعة واسعة من المواقع المحلية والدولية.",
+    servicesAvailable: "الخدمات المتاحة:",
+    ctaTitle: "تشحن إلى وجهة أخرى؟",
+    ctaSub:
+      "نصمّم بانتظام مسارات شحن لتغطية دول خارج مواقعنا الرئيسية. أخبرنا بمتطلباتك.",
+    inquireRoute: "استفسر عن مسار خاص",
+    contactOffice: "اتصل بالمكتب",
+  },
+
+  /* — Contact page — */
+  contactPage: {
+    heroTitle: "اتصل بنا",
+    heroSubtitle:
+      "تواصل مع فريقنا للاستفسارات العامة أو ملاحظات الخدمة أو الشحنات المخصّصة.",
+    home: "الرئيسية",
+    contact: "اتصل بنا",
+    getInTouch: "تواصل معنا",
+    getInTouchText:
+      "سواء كنت عميل شحن دائم أو تبحث عن دعم في النقل، راسلنا. نحن هنا لمساعدتك.",
+    phoneNumber: "رقم الهاتف",
+    emailAddress: "البريد الإلكتروني",
+    officeAddress: "عنوان المكتب",
+    officeHours: "ساعات العمل",
+    officeHoursWeek: "الإثنين — السبت: 8:00 صباحاً — 6:00 مساءً",
+    officeHoursSun: "الأحد: مغلق",
+    sendUsMessage: "أرسل لنا رسالة",
+    successTitle: "تم إرسال الرسالة بنجاح!",
+    successText: "شكراً لتواصلك. سيتصل بك أحد مديري عمليات الشحن قريباً.",
+    sendAnother: "إرسال رسالة أخرى",
+    fullNameLabel: "الاسم الكامل",
+    emailLabel: "البريد الإلكتروني",
+    phoneLabel: "رقم الهاتف",
+    serviceInterest: "الخدمة المطلوبة",
+    selectService: "اختر خدمة...",
+    messageQuery: "الرسالة / الاستفسار",
+    namePlaceholder: "محمد أحمد",
+    emailPlaceholder: "you@example.com",
+    phonePlaceholder: "+971 50 000 0000",
+    messagePlaceholder: "يرجى وصف متطلبات شحنتك أو أسئلتك المحدّدة...",
+    sending: "جارٍ الإرسال...",
+    submit: "إرسال الرسالة",
+    genericError: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    locationLabel: "الموقع",
+    visitHq: "قم بزيارة مقرّنا الرئيسي",
+    visitHqSub:
+      "نقع في قلب مركز دبي اللوجستي. لا تتردّد في زيارة مكتبنا لحجوزات الشحن المباشرة.",
+    serviceOptions: [
+      { value: "air-cargo", label: "شحن جوي" },
+      { value: "sea-cargo", label: "شحن بحري" },
+      { value: "land-cargo", label: "شحن بري" },
+      { value: "villa-shifting", label: "نقل الفلل" },
+      { value: "office-relocation", label: "نقل المكاتب" },
+      { value: "car-shipping", label: "شحن السيارات" },
+      { value: "trailer-service", label: "خدمة المقطورات (الخليج)" },
+      { value: "warehouse-storage", label: "التخزين" },
+    ],
+  },
+
+  /* — FAQ page — */
+  faqPage: {
+    heroTitle: "الأسئلة الشائعة",
+    heroSubtitle:
+      "لديك أسئلة؟ لدينا الإجابات. استكشف قائمتنا الشاملة للأسئلة المتكرّرة.",
+    home: "الرئيسية",
+    faq: "الأسئلة الشائعة",
+    searchPlaceholder: "ابحث في الأسئلة...",
+    categories: "الفئات",
+    allQuestions: "جميع الأسئلة",
+    all: "الكل",
+    heading: "أسئلة {cat} ({n})",
+    noResultsTitle: "لا توجد أسئلة مطابقة.",
+    noResultsText: "حاول تعديل كلمة البحث أو تصفّح فئات أخرى.",
+    ctaTitle: "لديك سؤال مختلف؟",
+    ctaSub: "متخصّصو خدمة العملاء لدينا متاحون على مدار الساعة للإجابة على أي استفسارات خاصة.",
+    contactSupport: "تواصل مع الدعم",
+    requestFreeQuote: "اطلب عرض سعر مجاني",
+  },
+
   /* — Blog — */
   blog: {
     title: "مدونتنا",

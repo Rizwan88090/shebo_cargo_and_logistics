@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdSearch, MdArrowForward } from "react-icons/md";
 import { faqs, faqCategories } from "@/data/faq";
+import { faqCategoryAr, faqTranslationsAr } from "@/data/faqI18n";
+import { useLanguage } from "@/config/i18n";
 import styles from "./faq.module.css";
 
 function FaqAccordionItem({ question, answer }: { question: string; answer: string }) {
@@ -23,10 +25,22 @@ function FaqAccordionItem({ question, answer }: { question: string; answer: stri
 }
 
 export default function FAQPage() {
+  const { t, locale } = useLanguage();
+  const tf = t.faqPage;
+  const isAr = locale === "ar";
+  const catLabel = (cat: string) => (isAr ? faqCategoryAr[cat] ?? cat : cat);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const filteredFaqs = faqs.filter((faq) => {
+  // Localize question/answer while keeping the English category key for filtering.
+  const localizedFaqs = faqs.map((faq) =>
+    isAr && faqTranslationsAr[faq.id]
+      ? { ...faq, question: faqTranslationsAr[faq.id].question, answer: faqTranslationsAr[faq.id].answer }
+      : faq,
+  );
+
+  const filteredFaqs = localizedFaqs.filter((faq) => {
     const matchesSearch =
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
@@ -48,7 +62,7 @@ export default function FAQPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            FAQ
+            {tf.heroTitle}
           </motion.h1>
           <motion.p
             className="page-hero__subtitle"
@@ -56,12 +70,12 @@ export default function FAQPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Got questions? We have answers. Explore our comprehensive frequently asked questions.
+            {tf.heroSubtitle}
           </motion.p>
           <div className="page-hero__breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{tf.home}</Link>
             <span>/</span>
-            <span>FAQ</span>
+            <span>{tf.faq}</span>
           </div>
         </div>
       </section>
@@ -77,7 +91,7 @@ export default function FAQPage() {
                 <MdSearch className={styles.searchIcon} />
                 <input
                   type="text"
-                  placeholder="Search questions..."
+                  placeholder={tf.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={styles.searchInput}
@@ -87,7 +101,7 @@ export default function FAQPage() {
 
               {/* Category selector */}
               <div className={styles.categoriesCard}>
-                <h3 className={styles.sidebarTitle}>Categories</h3>
+                <h3 className={styles.sidebarTitle}>{tf.categories}</h3>
                 <div className={styles.categoryBtns}>
                   <button
                     className={`${styles.categoryBtn} ${
@@ -95,7 +109,7 @@ export default function FAQPage() {
                     }`}
                     onClick={() => setActiveCategory("All")}
                   >
-                    All Questions
+                    {tf.allQuestions}
                   </button>
                   {faqCategories.map((category) => (
                     <button
@@ -105,7 +119,7 @@ export default function FAQPage() {
                       }`}
                       onClick={() => setActiveCategory(category)}
                     >
-                      {category}
+                      {catLabel(category)}
                     </button>
                   ))}
                 </div>
@@ -115,7 +129,9 @@ export default function FAQPage() {
             {/* Accordion List */}
             <div className={styles.listColumn}>
               <h2 className={styles.listHeading}>
-                {activeCategory} FAQs ({filteredFaqs.length})
+                {tf.heading
+                  .replace("{cat}", activeCategory === "All" ? tf.all : catLabel(activeCategory))
+                  .replace("{n}", String(filteredFaqs.length))}
               </h2>
 
               <div className={styles.faqGrid}>
@@ -136,8 +152,8 @@ export default function FAQPage() {
                   </AnimatePresence>
                 ) : (
                   <div className={styles.noResults}>
-                    <h3>No matching FAQs found.</h3>
-                    <p>Try refining your search keyword or checking other categories.</p>
+                    <h3>{tf.noResultsTitle}</h3>
+                    <p>{tf.noResultsText}</p>
                   </div>
                 )}
               </div>
@@ -150,17 +166,17 @@ export default function FAQPage() {
       <section className="section section--dark" style={{ textAlign: "center" }}>
         <div className="container">
           <h2 className="section-heading__title" style={{ color: "var(--color-white)" }}>
-            Have a Different Question?
+            {tf.ctaTitle}
           </h2>
           <p className="section-heading__subtitle" style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "var(--space-8)" }}>
-            Our customer service specialists are online 24/7 to answer any custom inquiries.
+            {tf.ctaSub}
           </p>
           <div style={{ display: "flex", gap: "var(--space-4)", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/contact" className="btn btn-primary btn-lg">
-              Contact Support <MdArrowForward />
+              {tf.contactSupport} <MdArrowForward style={{ transform: isAr ? "rotate(180deg)" : "none" }} />
             </Link>
             <Link href="/request-quote" className="btn btn-secondary btn-lg">
-              Request a Free Quote
+              {tf.requestFreeQuote}
             </Link>
           </div>
         </div>

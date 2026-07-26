@@ -4,9 +4,16 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { MdCheckCircle, MdArrowForward } from "react-icons/md";
 import { countries } from "@/data/countries";
+import { countryDescriptionsAr, serviceTagAr } from "@/data/countriesI18n";
+import { useLanguage } from "@/config/i18n";
 import styles from "./countries.module.css";
 
 export default function CountriesPage() {
+  const { t, locale } = useLanguage();
+  const tc = t.countriesPage;
+  const isAr = locale === "ar";
+  const countryNames = t.home.countryNames as Record<string, string>;
+
   return (
     <>
       {/* Page Hero */}
@@ -18,7 +25,7 @@ export default function CountriesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Countries We Serve
+            {tc.heroTitle}
           </motion.h1>
           <motion.p
             className="page-hero__subtitle"
@@ -26,12 +33,12 @@ export default function CountriesPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            With major shipping routes and global logistical hubs, we deliver seamless transit to over 50 countries.
+            {tc.heroSubtitle}
           </motion.p>
           <div className="page-hero__breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{tc.home}</Link>
             <span>/</span>
-            <span>Countries</span>
+            <span>{tc.countries}</span>
           </div>
         </div>
       </section>
@@ -40,11 +47,9 @@ export default function CountriesPage() {
       <section className="section">
         <div className="container">
           <div className="section-heading">
-            <span className="section-heading__label">Global Network</span>
-            <h2 className="section-heading__title">Our Destinations</h2>
-            <p className="section-heading__subtitle">
-              We offer full air, sea, and land cargo transport services to a wide variety of domestic and international locations.
-            </p>
+            <span className="section-heading__label">{tc.networkLabel}</span>
+            <h2 className="section-heading__title">{tc.destinationsTitle}</h2>
+            <p className="section-heading__subtitle">{tc.destinationsSub}</p>
           </div>
 
           <div className={styles.countriesGrid}>
@@ -59,17 +64,19 @@ export default function CountriesPage() {
               >
                 <div className={styles.cardHeader}>
                   <span className={styles.flag}>{country.flag}</span>
-                  <h3 className={styles.name}>{country.name}</h3>
+                  <h3 className={styles.name}>{countryNames[country.code] ?? country.name}</h3>
                 </div>
-                <p className={styles.description}>{country.description}</p>
+                <p className={styles.description}>
+                  {isAr ? countryDescriptionsAr[country.code] ?? country.description : country.description}
+                </p>
 
                 <div className={styles.servicesSection}>
-                  <h4 className={styles.servicesTitle}>Services Available:</h4>
+                  <h4 className={styles.servicesTitle}>{tc.servicesAvailable}</h4>
                   <div className={styles.servicesList}>
                     {country.services.map((service) => (
                       <div key={service} className={styles.serviceTag}>
                         <MdCheckCircle className={styles.checkIcon} />
-                        <span>{service}</span>
+                        <span>{isAr ? serviceTagAr[service] ?? service : service}</span>
                       </div>
                     ))}
                   </div>
@@ -90,17 +97,17 @@ export default function CountriesPage() {
             viewport={{ once: true }}
           >
             <h2 className="section-heading__title" style={{ color: "var(--color-white)", marginBottom: "var(--space-4)" }}>
-              Shipping to another destination?
+              {tc.ctaTitle}
             </h2>
             <p className="section-heading__subtitle" style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "var(--space-8)" }}>
-              We regularly customize shipping paths to cover countries beyond our primary locations. Let us know your requirements.
+              {tc.ctaSub}
             </p>
             <div style={{ display: "flex", gap: "var(--space-4)", justifyContent: "center", flexWrap: "wrap" }}>
               <Link href="/request-quote" className="btn btn-primary btn-lg">
-                Inquire Special Route <MdArrowForward />
+                {tc.inquireRoute} <MdArrowForward style={{ transform: isAr ? "rotate(180deg)" : "none" }} />
               </Link>
               <Link href="/contact" className="btn btn-secondary btn-lg">
-                Contact Office
+                {tc.contactOffice}
               </Link>
             </div>
           </motion.div>

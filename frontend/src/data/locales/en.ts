@@ -254,6 +254,94 @@ export const en = {
     exploreOther: "Explore Other Services",
   },
 
+  /* — Countries page — */
+  countriesPage: {
+    heroTitle: "Countries We Serve",
+    heroSubtitle:
+      "With major shipping routes and global logistical hubs, we deliver seamless transit to over 50 countries.",
+    home: "Home",
+    countries: "Countries",
+    networkLabel: "Global Network",
+    destinationsTitle: "Our Destinations",
+    destinationsSub:
+      "We offer full air, sea, and land cargo transport services to a wide variety of domestic and international locations.",
+    servicesAvailable: "Services Available:",
+    ctaTitle: "Shipping to another destination?",
+    ctaSub:
+      "We regularly customize shipping paths to cover countries beyond our primary locations. Let us know your requirements.",
+    inquireRoute: "Inquire Special Route",
+    contactOffice: "Contact Office",
+  },
+
+  /* — Contact page — */
+  contactPage: {
+    heroTitle: "Contact Us",
+    heroSubtitle:
+      "Get in touch with our team for general inquiries, service feedback, or specific custom shipments.",
+    home: "Home",
+    contact: "Contact",
+    getInTouch: "Get In Touch",
+    getInTouchText:
+      "Whether you are a regular cargo shipping customer or looking for moving support, drop us a line. We are here to help.",
+    phoneNumber: "Phone Number",
+    emailAddress: "Email Address",
+    officeAddress: "Office Address",
+    officeHours: "Office Hours",
+    officeHoursWeek: "Monday — Saturday: 8:00 AM — 6:00 PM",
+    officeHoursSun: "Sunday: Closed",
+    sendUsMessage: "Send Us a Message",
+    successTitle: "Message Sent Successfully!",
+    successText: "Thank you for reaching out. A cargo operations manager will contact you shortly.",
+    sendAnother: "Send another message",
+    fullNameLabel: "Full Name",
+    emailLabel: "Email Address",
+    phoneLabel: "Phone Number",
+    serviceInterest: "Service of Interest",
+    selectService: "Select a service...",
+    messageQuery: "Message / Query",
+    namePlaceholder: "John Doe",
+    emailPlaceholder: "john@example.com",
+    phonePlaceholder: "+971 50 000 0000",
+    messagePlaceholder: "Please describe your cargo requirements or specific questions...",
+    sending: "Sending...",
+    submit: "Submit Message",
+    genericError: "Something went wrong. Please try again.",
+    locationLabel: "Location",
+    visitHq: "Visit Our Headquarters",
+    visitHqSub:
+      "We are located in the heart of Dubai's logistics center. Feel free to visit our office for direct cargo bookings.",
+    serviceOptions: [
+      { value: "air-cargo", label: "Air Cargo" },
+      { value: "sea-cargo", label: "Sea Cargo" },
+      { value: "land-cargo", label: "Land Cargo" },
+      { value: "villa-shifting", label: "Villa Shifting" },
+      { value: "office-relocation", label: "Office Relocation" },
+      { value: "car-shipping", label: "Car Shipping" },
+      { value: "trailer-service", label: "Trailer Service (GCC)" },
+      { value: "warehouse-storage", label: "Warehouse Storage" },
+    ],
+  },
+
+  /* — FAQ page — */
+  faqPage: {
+    heroTitle: "FAQ",
+    heroSubtitle:
+      "Got questions? We have answers. Explore our comprehensive frequently asked questions.",
+    home: "Home",
+    faq: "FAQ",
+    searchPlaceholder: "Search questions...",
+    categories: "Categories",
+    allQuestions: "All Questions",
+    all: "All",
+    heading: "{cat} FAQs ({n})",
+    noResultsTitle: "No matching FAQs found.",
+    noResultsText: "Try refining your search keyword or checking other categories.",
+    ctaTitle: "Have a Different Question?",
+    ctaSub: "Our customer service specialists are online 24/7 to answer any custom inquiries.",
+    contactSupport: "Contact Support",
+    requestFreeQuote: "Request a Free Quote",
+  },
+
   /* — Blog — */
   blog: {
     title: "Our Blog",
