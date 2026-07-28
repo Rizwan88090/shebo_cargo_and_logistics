@@ -353,7 +353,7 @@ export default function HomePage() {
           </div>
 
           <div className={styles.countriesGrid}>
-            {countries.slice(0, 8).map((country, index) => (
+            {countries.slice(0, 12).map((country, index) => (
               <motion.div
                 key={country.code}
                 initial={{ opacity: 0, scale: 0.9 }}

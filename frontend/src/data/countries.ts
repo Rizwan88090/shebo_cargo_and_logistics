@@ -44,6 +44,14 @@ export const countries: Country[] = [
     priority: true,
   },
   {
+    name: "Russia",
+    code: "RU",
+    flag: "🇷🇺",
+    description: "Air and sea cargo to Moscow, St. Petersburg and major Russian hubs with full customs handling.",
+    services: ["Air Cargo", "Sea Cargo", "Land Cargo"],
+    priority: true,
+  },
+  {
     name: "Qatar",
     code: "QA",
     flag: "🇶🇦",

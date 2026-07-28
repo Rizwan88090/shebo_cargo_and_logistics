@@ -142,6 +142,17 @@
   margin-top: var(--space-2);
 }
 
+/* Invisible bridge that fills the gap between the nav link and the dropdown,
+   so moving the cursor down onto the menu never crosses a dead zone. */
+.dropdown::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--space-2));
+  height: var(--space-2);
+}
+
 .dropdownLink {
   display: block;
   padding: var(--space-3) var(--space-4);

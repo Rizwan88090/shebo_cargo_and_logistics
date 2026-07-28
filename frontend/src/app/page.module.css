@@ -19,9 +19,9 @@
   inset: 0;
   background: linear-gradient(
     135deg,
-    rgba(5, 13, 26, 0.88) 0%,
-    rgba(10, 22, 40, 0.72) 50%,
-    rgba(5, 13, 26, 0.92) 100%
+    rgba(5, 13, 26, 0.66) 0%,
+    rgba(10, 22, 40, 0.46) 50%,
+    rgba(5, 13, 26, 0.72) 100%
   );
   z-index: 1;
 }
@@ -334,14 +334,12 @@
   position: relative;
   border-radius: var(--radius-xl);
   overflow: hidden;
+  /* Fixed height is required: the image and content are both absolutely
+     positioned, so the card has no intrinsic height of its own. Using 100%
+     here collapsed the cards to 0px once the Tilt3D wrapper was removed. */
   height: 400px;
   transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  transform-style: preserve-3d;
   border: 1px solid transparent;
-}
-
-.serviceCard {
-  height: 100%;
 }
 
 .serviceCard:hover {

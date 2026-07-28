@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,6 +20,18 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
+
+  // Dropdown hover with a close delay so it doesn't vanish while the cursor
+  // travels from the nav link down to the menu items.
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openDropdown = (href: string) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setActiveDropdown(href);
+  };
+  const scheduleCloseDropdown = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setActiveDropdown(null), 280);
+  };
 
   // Portal target only exists in the browser — render the drawer after mount.
   useEffect(() => {
@@ -83,8 +95,8 @@ export default function Navbar() {
             <div
               key={item.href}
               className={styles.navItem}
-              onMouseEnter={() => item.children && setActiveDropdown(item.href)}
-              onMouseLeave={() => setActiveDropdown(null)}
+              onMouseEnter={() => item.children && openDropdown(item.href)}
+              onMouseLeave={() => item.children && scheduleCloseDropdown()}
             >
               <Link
                 href={item.href}

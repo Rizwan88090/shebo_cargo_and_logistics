@@ -7,6 +7,7 @@ export interface NavItem {
 
 export const navigation: NavItem[] = [
   { label: "Home", href: "/", key: "home" },
+  { label: "About", href: "/about", key: "about" },
   {
     label: "Services",
     href: "/services",
@@ -22,7 +23,21 @@ export const navigation: NavItem[] = [
       { label: "Warehouse Storage", href: "/services/warehouse-storage", key: "warehouseStorage" },
     ],
   },
-  { label: "Order", href: "/order", key: "order" },
-  { label: "Tracking", href: "/tracking", key: "tracking" },
+  { label: "Countries", href: "/countries", key: "countries" },
+  { label: "Corporate", href: "/corporate", key: "corporate" },
+  { label: "Track Shipment", href: "/tracking", key: "tracking" },
+  {
+    label: "Resources",
+    href: "/blog",
+    key: "resources",
+    children: [
+      { label: "Blog", href: "/blog", key: "blog" },
+      { label: "Careers", href: "/careers", key: "careers" },
+      { label: "Gallery", href: "/gallery", key: "gallery" },
+      { label: "Reviews", href: "/reviews", key: "reviews" },
+      { label: "FAQ", href: "/faq", key: "faq" },
+      { label: "Support", href: "/support", key: "support" },
+    ],
+  },
   { label: "Contact", href: "/contact", key: "contact" },
 ];
