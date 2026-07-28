@@ -101,7 +101,7 @@ export const metadata: Metadata = {
   verification: {
     google:
       process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
-      "KCqUpSiBNNhGsH_D-2nsA3m05VpvHoVIuEwIWTOAmjg",
+      "M0SByM4lGCQlMl3UdDiZEwVZ4s2pxzjqQbuYOWXIBGk",
   },
 };
 
