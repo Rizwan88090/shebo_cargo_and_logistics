@@ -1,7 +1,7 @@
 // Public site URL — used for SEO canonical, sitemap.xml, robots.txt & Open Graph.
 // MUST match the exact live domain or Google will not index the site correctly.
 // Override on your VPS with NEXT_PUBLIC_SITE_URL=https://yourdomain.com
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sheboocargo.online";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shebocargo.com";
 
 export const siteConfig = {
   name: "Shebo Cargo and Logistics",
