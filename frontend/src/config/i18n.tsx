@@ -20,7 +20,9 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const locales: Record<Locale, Translations> = { en, ar };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  // Site opens in Arabic by default. A returning visitor's saved choice (below)
+  // still wins, so anyone who switched to English keeps English.
+  const [locale, setLocaleState] = useState<Locale>("ar");
 
   useEffect(() => {
     const saved = localStorage.getItem("shebo-lang") as Locale | null;

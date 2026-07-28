@@ -193,7 +193,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <body>
         <script
           type="application/ld+json"
