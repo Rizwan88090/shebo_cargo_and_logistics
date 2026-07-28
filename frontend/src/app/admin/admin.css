@@ -90,6 +90,9 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  /* Without this, a wide table forces the whole panel to overflow the viewport
+     instead of scrolling inside its own wrapper. */
+  min-width: 0;
 }
 
 .adminHeader {
@@ -226,6 +229,13 @@
 .adminContent {
   padding: 2rem;
   flex: 1;
+  min-width: 0; /* allow inner tables/panels to shrink & scroll instead of overflowing */
+}
+
+@media (max-width: 640px) {
+  .adminContent {
+    padding: 1rem 0.75rem;
+  }
 }
 
 /* ====== KPI Stat Cards ====== */
@@ -424,16 +434,21 @@
 /* Data Table */
 .data-table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
   width: 100%;
+  /* Keep a usable width on mobile so columns don't crush into single-letter
+     wrapping — the wrapper scrolls horizontally instead. */
+  min-width: 760px;
   border-collapse: collapse;
 }
 
 .data-table th {
   padding: 0.85rem 1rem;
   text-align: left;
+  white-space: nowrap;
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--color-gray-500);

@@ -63,7 +63,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="adminLayout">
+    // Admin panel is English-only — force LTR regardless of the site's language.
+    <div className="adminLayout" dir="ltr">
       {/* Sidebar */}
       <aside className={`adminSidebar ${sidebarOpen ? "adminSidebarOpen" : ""}`}>
         <div className="adminSidebarHeader">
