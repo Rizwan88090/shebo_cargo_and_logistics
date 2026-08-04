@@ -116,6 +116,19 @@ model Message {
   @@map("messages")
 }
 
+model Review {
+  id         String   @id @default(uuid())
+  name       String
+  company    String?
+  rating     Int
+  text       String
+  service    String?
+  isApproved Boolean  @default(true) @map("is_approved")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("reviews")
+}
+
 model Order {
   id             String      @id @default(uuid())
   orderNumber    String      @unique @map("order_number")

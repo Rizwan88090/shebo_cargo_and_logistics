@@ -305,3 +305,99 @@
     margin-top: var(--space-1);
   }
 }
+
+/* ——— Write-a-Review Modal ——— */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 9, 20, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 700;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--color-white);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-gold-300);
+}
+
+.modalClose {
+  position: absolute;
+  top: 0.9rem;
+  inset-inline-end: 0.9rem;
+  background: var(--color-gray-100);
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-navy-800);
+  font-size: 1.2rem;
+}
+
+.modalTitle {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--color-navy-800);
+  margin-bottom: 1.25rem;
+}
+
+.reviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.starPicker {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.starPickBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.15rem;
+  font-size: 1.8rem;
+  line-height: 1;
+  display: inline-flex;
+}
+
+.modalSuccess {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0.5rem;
+}
+
+.modalSuccess h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-navy-800);
+}
+
+[data-theme="dark"] .modal {
+  background: var(--color-navy-800);
+}
+
+[data-theme="dark"] .modalTitle,
+[data-theme="dark"] .modalSuccess h3 {
+  color: #fff;
+}

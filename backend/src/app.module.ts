@@ -10,6 +10,7 @@ import { CitiesModule } from './cities/cities.module';
 import { ServicesModule } from './services/services.module';
 import { OrdersModule } from './orders/orders.module';
 import { MessagesModule } from './messages/messages.module';
+import { ReviewsModule } from './reviews/reviews.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -41,6 +42,7 @@ import { AppService } from './app.service';
     ServicesModule,
     OrdersModule,
     MessagesModule,
+    ReviewsModule,
     DashboardModule,
   ],
   controllers: [AppController],

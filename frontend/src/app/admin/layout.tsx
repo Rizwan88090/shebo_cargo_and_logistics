@@ -9,6 +9,7 @@ import {
   MdSupportAgent,
   MdListAlt,
   MdMarkEmailUnread,
+  MdStar,
   MdLogout,
   MdMenu,
   MdClose,
@@ -23,6 +24,7 @@ const adminSidebarLinks = [
   { href: "/support", label: "Support Tickets", icon: <MdSupportAgent /> },
   { href: "/admin/orders", label: "Manage Orders", icon: <MdListAlt /> },
   { href: "/admin/messages", label: "Messages", icon: <MdMarkEmailUnread /> },
+  { href: "/admin/reviews", label: "Reviews", icon: <MdStar /> },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
